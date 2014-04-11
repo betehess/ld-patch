@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Linked Data Patch</title>
+    <meta charset='utf-8'>
+    <script src='http://www.w3.org/Tools/respec/respec-w3c-common'
+            async class='remove'></script>
+    <script class='remove'>
+      var respecConfig = {
+          // specification status (e.g. WD, LCWD, WG-NOTE, etc.). If in doubt use ED.
+          specStatus:           "ED",
+          
+          // the specification's short name, as in http://www.w3.org/TR/short-name/
+          shortName:            "ld-patch",
+
+          // if your specification has a subtitle that goes below the main
+          // formal title, define it here
+          // subtitle   :  "an excellent document",
+
+          // if you wish the publication date to be other than the last modification, set this
+          // publishDate:  "2009-08-06",
+
+          // if the specification's copyright date is a range of years, specify
+          // the start date here:
+          // copyrightStart: "2005"
+
+          // if there is a previously published draft, uncomment this and set its YYYY-MM-DD date
+          // and its maturity status
+          // previousPublishDate:  "1977-03-15",
+          // previousMaturity:  "WD",
+
+          // if there a publicly available Editor's Draft, this is the link
+          // edDraftURI:           "http://berjon.com/",
+
+          // if this is a LCWD, uncomment and set the end of its review period
+          // lcEnd: "2009-08-05",
+
+          // editors, add as many as you like
+          // only "name" is required
+          editors:  [
+              {
+                  name:       "Alexandre Bertails"
+              ,   url:        "http://bertails.org/"
+              ,   mailto:     "alexandre@bertails.org"
+              ,   company:    "Pellucid Analytics"
+              ,   companyURL: "http://www.pellucid.com"
+              },
+          ],
+          
+          // name of the WG
+          wg:           "The Linked Data enthusiasts",
+          
+          // URI of the public WG page
+          wgURI:        "https://github.com/ld-specs",
+          
+          // name (without the @w3c.org) of the public mailing to which comments are due
+          wgPublicList: "spec-writers-anonymous",
+          
+          // URI of the patent status for this WG, for Rec-track documents
+          // !!!! IMPORTANT !!!!
+          // This is important for Rec-track documents, do not copy a patent URI from a random
+          // document unless you know what you're doing. If in doubt ask your friendly neighbourhood
+          // Team Contact.
+          wgPatentURI:  "",
+          // !!!! IMPORTANT !!!! MAKE THE ABOVE BLINK IN YOUR HEAD
+      };
+    </script>
+  </head>
+  <body>
+    <section id='abstract'>
+      <p>
+        Linked Data Patch (LD Patch) is a patch format for Linked Data.
+      </p>
+    </section>
+    
+    <section id='sotd'>
+      <p>
+        @@You need to have a custom SotD paragraph. Maybe give a succinct description of your spec's
+        status.@@
+      </p>
+    </section>
+    
+    <section id='introduction'>
+      <h2>Introduction</h2>
+      <p>
+        This specification defines Linked Data Patch (LD Patch), a patch format for Linked Data. It is intended to be used with the <a href="https://tools.ietf.org/html/rfc5789">PATCH Method for HTTP</a> but not limited to. This specification includes a concrete syntax, an abstract model and an operational semantics for LD Patch.
+      </p>
+      <p id='expressive-power'>
+        The scope of LD Patch is intentionally limited when compared to SPARQL Update capabilities. Its expressive power is limited to (relative) RDF Graphs. Matching nodes is achieved using property paths. Nodes can be bound to variables. The language includes support for blank nodes and RDF Lists.
+      </p>
+      <p id='design-choices'>
+        The authors of the document made conscious choices when designing the LD Patch language. Here are a few:
+        <ul>
+          <li>LD Patch was thought to be used in Linked Data applications. It is <strong>not</strong> designed for general purpose RDF applications.</li>
+          <li>if more expressive power is desired, the authors recommends the use of SPARQL Update.</li>
+          <li>LD Patch is not design to describe diffs between RDF Graphs: it is meants to be used in applications as a real patching language. That being said, it is strongly inspired from <a href="http://afs.github.io/rdf-patch/">RDF Patch</a> and is (mostly?) a superset.</li>
+          <li>compatibity with SPARQL Update was not sought as there is no intention to make LD Patch's semantics a subset of SPARQL Update's. As a result, an LDP Patch instance is not a valid SPARQL update query.</li>
+          <li>being able to match Blank Nodes is a desired and non-negociable property</li>
+          <li>good performance characteristics of the operational semantics requires some trade-offs in the features of the language.</li>
+          <li></li>
+        </ul>
+      </p>
+    </section>
+
+    <section id='terminology'>
+      <h2>Terminology</h2>
+      <p>
+      </p>
+      <dl class="glossary">
+        <dt>Linked Data</dt>
+        <dd></dd>
+        <dt>Property path</dt>
+        <dd></dd>
+        <dt>Concrete Syntax</dt>
+        <dd></dd>
+        <dt>Abstract Syntax</dt>
+        <dd></dd>
+        <dt>Operational Semantics</dt>
+        <dd></dd>
+        <dt></dt>
+        <dd></dd>
+        <dt></dt>
+        <dd></dd>
+      </dl>
+    </section>
+
+    <section id='examples'>
+      <h2>LD Patch examples</h2>
+
+      <p>Input Graph</p>
+
+      <pre class="example">
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+[] foaf:name "Alexandre" ;
+  foaf:knows <http://bblfish.net/#hjs> .
+
+<http://bblfish.net/#hjs> foaf:name "Henry Story" ;
+  foaf:currentProject <http://webid.info/> .          
+      </pre>
+
+      <p>@@</p>
+
+      <pre class="example">
+DELETE {
+  <http://bblfish.net/#hjs> ?p ?o
+}
+WHERE {
+  <http://bblfish.net/#hjs> ?p ?o
+}
+      </pre>
+
+      <p>Expected Graph</p>
+
+      <pre class="example">
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+[] foaf:name "Alex" ;
+  foaf:knows <http://bblfish.net/#hjs> .
+      </pre>
+
+      <pre class="example">
+
+      </pre>
+
+      <pre class="example">
+
+      </pre>
+
+    </section>
+
+    <section id='concrete-syntax'>
+      <h2>Concrete Syntax</h2>
+      <p>
+      </p>
+    </section>
+
+    <section id='abstract-syntax'>
+      <h2>Abstract Syntax</h2>
+      <p>
+      </p>
+      <pre>
+LDPatch             ::= List(Statement)
+Statement           ::= BindObject | BindSubject | Add | Delete | Clear | Replace
+BindObject          ::= (ConcreteNode, PropertyPath, Var)
+BindSubject         ::= (Var, PropertyPath, ConcreteNode)
+Add                 ::= (VarOrConcreteNode, PropertyPath, ConcreteNode)
+Delete              ::= (VarOrConcreteNode, PropertyPath, VarOrConcreteNode)
+Clear               ::= (VarOrConcreteNode, PropertyPath)
+Replace             ::= (VarOrConcreteNode, PropertyPath, VarOrConcreteNode)
+VarOrConcreteNode   ::= Var | ConcreteNode
+ConcreteNode        ::= Uri | Literal
+Node                ::= Uri | Bnode | Literal
+PropertyPath        ::= List(Uri)
+      </pre>
+
+    </section>
+    
+    <section id='operational-semantics'>
+      <h2>Operational Semantics</h2>
+      <p>
+An Env(ironment) is a Map from Var-s to Node-s
+Env   ::= Map(Var, Node)
+
+A State is an Env and a Graph
+State ::= (Env, Graph)
+
+get is a function that maps a Var to a Node or a ConcreteNode to itself
+get: Env -> VarOrConcreteNode -> Node
+
+
+singleSubjectMatch is a function returning the *unique* Node in the subject position matching the given PropertyPath/Node in the given Graph 
+singleSubjectMatch: Graph -> (PropertyPath, Node) -> Node
+
+singleObjectMatch is a function returning the *unique* Node in the object position matching the given Node/PropertyPath in the given Graph 
+singleObjectMatch: Graph -> (Node, PropertyPath) -> Node
+
+objectMatch: Graph -> (Node, PropertyPath) -> List(Node)
+
+a Statement is applied to a Graph in a given Env and return a new (Env, Graph) as the new state
+applyStatement: (Env, Graph) -> Statement -> (Env, Graph)
+
+env: Env
+graph: Graph
+
+
+
+singleObjectMatch(graph, concreteNode, propertyPath) = node
+------------------------------------------------------------------------------------ bind-object
+env, graph ::> BindObject(concreteNode, propertyPath, x) --> (env[x -> node], graph)
+
+
+singleSubjectMatch(graph, propertyPath, concreteNode) = node
+------------------------------------------------------------------------------------ bind-subject
+env, graph ::> BindObject(concreteNode, propertyPath, x) --> (env[x -> node], graph)
+
+
+get(env, subject) = subjectValue
+get(env, object) = objectValue
+-------------------------------------------------------------------------------------------------------------- add
+env, graph ::> Add(subject, propertyPath, object) --> (env, graph + (subjectValue, propertyPath, objectValue))
+
+
+get(env, subject) = subjectValue
+get(env, object) = objectValue
+-------------------------------------------------------------------------------------------------------------- delete
+env, graph ::> Delete(subject, propertyPath, object) --> (env, graph + (subjectValue, propertyPath, objectValue))
+
+.........
+
+      </p>
+    </section>
+    
+
+  </body>
+</html>
