@@ -197,8 +197,8 @@ PropertyPath        ::= List(Uri)
     
     <section id='operational-semantics'>
       <h2>Operational Semantics</h2>
-      <p>
-An Env(ironment) is a Map from Var-s to Node-s
+      <p>      
+<pre>An Env(ironment) is a Map from Var-s to Node-s
 Env   ::= Map(Var, Node)
 
 A State is an Env and a Graph
@@ -245,8 +245,7 @@ get(env, object) = objectValue
 -------------------------------------------------------------------------------------------------------------- delete
 env, graph ::> Delete(subject, propertyPath, object) --> (env, graph + (subjectValue, propertyPath, objectValue))
 
-.........
-
+.........</pre>
       </p>
     </section>
     
