@@ -208,9 +208,13 @@ f: ???             -> NodeSet
 LDPatch             ::= List(Statement)
 Statement           ::= Bind | Add | Delete | Update
 Bind                ::= (VarOrConcreteNode, Path, Var)
-Add                 ::= (VarOrConcreteNode, Path, OrientedPredicate, Node)
-Delete              ::= (VarOrConcreteNode, Path, OrientedPredicate, Option(Node))
-Update              ::= (VarOrConcreteNode, Path, OrientedPredicate, Node, Node)
+Add                 ::= (VarOrConcreteNode, Path, OrientedPredicate, PointedGraph)
+Delete              ::= (VarOrConcreteNode, Path, OrientedPredicate, Option(PointedGraph))
+Update              ::= (VarOrConcreteNode, PointedGraph)
+Cut                 ::= VarOrConcreteNode
+PointedGraph        ::= (Node, Graph)
+Graph               ::= Set(Triple)
+Triple              ::= (Node, Node, Node)
 OrientedPredicate   ::= (Direction, Uri)
 VarOrConcreteNode   ::= Var | ConcreteNode
 ConcreteNode        ::= Uri | Literal
@@ -284,25 +288,42 @@ sem_bind((env, graph), Bind(start, path, v)) =
   (env[v -> nodes], graph)
 
 sem_add: (Env, Graph) -> Add -> (Env, Graph)
-sem_add((env, graph), Add(start, path, orientedPredicate, node)) =
+sem_add((env, graph), Add(start, path, orientedPredicate, (node, pgTriples))) =
   let nodes = sem_matchingNodes(sem_varOrConcreteNode(graph, env, start), path) in  
   let triples = makeTriples(nodes, orientedPredicate, node) in
-  (env, graph + triples)
+  (env, graph + triples + pgTriples)
 
 
 sem_delete: (Env, Graph) -> Delete -> (Env, Graph)
-sem_delete((env, graph), Delete(start, path, orientedPredicate, optionalNode)) =
+sem_delete((env, graph), Delete(start, path, orientedPredicate, None)) =
   let nodes = sem_matchingNodes(sem_varOrConcreteNode(graph, env, start), path) in
-  let triples = { matchTriples(graph, node, orientedPredicate, optionalNode) | node ∈ nodes } in
+  let triples = { matchTriples(graph, node, orientedPredicate, None) | node ∈ nodes } in
   (env, graph - triples)
+sem_delete((env, graph), Delete(start, path, orientedPredicate, Some((node, pgTriples)))) =
+  let nodes = sem_matchingNodes(sem_varOrConcreteNode(graph, env, start), path) in
+  let triples = { matchTriples(graph, node, orientedPredicate, Some(node)) | node ∈ nodes } in
+  (env, graph - triples - pgTriples)
+
+sem_cut: (Env, Graph) -> Cut -> (Env, Graph)
+sem_cut((env, graph), Cut(varOrConcreteNode)) =
+  let nodes = sem_varOrConcreteNode(graph, env, varConcreteNode) in
+  let triples = connectedGraph(nodes) in
+  (env, graph = triples)
+
+
+connectedGraph: Graph -> Set(Node) -> Set(Triple)
+connectedGraph(graph, nodes) =
+  let f(triples) = { matchingTriples(o, None, None)  | (s, p, o) ∈ triples } in
+  fixpoint f
 
 
 sem_update: (Env, Graph) -> Update -> (Env, Graph)
-sem_update((env, graph), Update(start, path, orientedPredicate, node1, node2)) =
-  let nodes = sem_matchingNodes(sem_varOrConcreteNode(graph, env, start), path) in
-  let triplesToRemove = { matchTriples(graph, node, orientedPredicate, optionalNode) | node ∈ nodes } in
-  let triplesToAdd = makeTriples(nodes, orientedPredicate, node2) in
-  (env, graph - triplesToRemove + triplesToAdd)
+sem_update((env, graph), Update(varOrConcreteNode, (pgNode, pgTriples))) =
+  let nodes = sem_varOrConcreteNode(graph, env, varOrConcreteNode) in
+  let incomingTriples = { matchingTriples(None, None, node) | node ∈ nodes } in
+  let newIncomingTriples = { (s, p, pgNode) | (s, p, _) ∈ incomingTriples } in
+  let connectedTriples = connectedGraph(nodes) in
+  (env, graph - incomingTriples - connectedTriples + newIncomingTriples + pgTriples)
 
 sem_patch: Graph -> List(Statement) -> Graph
 sem_patch(g, statements) = sem_patch_state(({}, g), statements)
