@@ -207,10 +207,10 @@ f: ???             -> NodeSet
 
 LDPatch             ::= List(Statement)
 Statement           ::= Bind | Add | Delete | Update
-Bind                ::= ((VarOrConcreteNode, Path), Var)
-Add                 ::= ((VarOrConcreteNode, Path), OrientedPredicate, Node)
-Delete              ::= ((VarOrConcreteNode, Path), OrientedPredicate, Option(Node))
-Update              ::= ((VarOrConcreteNode, Path), OrientedPredicate, Node, Node)
+Bind                ::= (VarOrConcreteNode, Path, Var)
+Add                 ::= (VarOrConcreteNode, Path, OrientedPredicate, Node)
+Delete              ::= (VarOrConcreteNode, Path, OrientedPredicate, Option(Node))
+Update              ::= (VarOrConcreteNode, Path, OrientedPredicate, Node, Node)
 OrientedPredicate   ::= (Direction, Uri)
 VarOrConcreteNode   ::= Var | ConcreteNode
 ConcreteNode        ::= Uri | Literal
@@ -327,11 +327,40 @@ TODO:
 * parsing error
 * grammar
 * lists
+* examples
+* best practices
 
         </pre>
       </p>
     </section>
     
+    <section id='operational-semantics'>
+      <h2>Operational Semantics</h2>
+      <p>      
+        <pre>
+patchDoc ::= prefixID* statement*
+statement ::= bind | add | delete | update
+bind ::= 'Bind' varOrConcreteNode path var '.'
+add ::= 'Add' varOrConcreteNode path orientedPredicate pointedGraph
+delete ::= 'Delete' varOrConcreteNode path orientedPredicate pointedGraph?
+update ::= 'Update' varOrConcreteNode pointedGraph
+cut ::= 'Cut' varOrConcreteNode
+
+pointedGraph ::= iri | RDFLiteral | triples
+
+path ::= pathElement*
+pathElement ::= direction iri '!'?
+direction ::= '/' | '\'
+orientedPredicate ::= '-'? iri
+
+varOrConcreteNode ::= var | concreteNode
+concreteNode ::= iri | RDFLiteral
+
+var ::= '?' [a-zA-Z]+ ('-' [a-zA-Z0-9]+)*
+
+        </pre>
+      </p>
+    </section>
 
   </body>
 </html>
