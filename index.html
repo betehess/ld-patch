@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Linked Data Patch</title>
+    <title>Linked Data Patch Format</title>
     <meta charset='utf-8'>
     <script src='http://www.w3.org/Tools/respec/respec-w3c-common'
             async class='remove'></script>
@@ -53,22 +53,32 @@
               ,   companyURL: "http://web.mit.edu"
               },
           ],
+
+          authors:  [
+              {
+                  name:       "Pierre-Antoine Champin"
+              ,   url:        "http://liris.cnrs.fr/~pchampin/en/"
+//              ,   mailto:     "@@@"
+              ,   company:    "Université de Lyon"
+//              ,   companyURL: "@@@"
+              },
+          ],
           
           // name of the WG
-          wg:           "The Linked Data enthusiasts",
+          wg:           "Linked Data Platform Working Group",
           
           // URI of the public WG page
-          wgURI:        "https://github.com/ld-specs",
+          wgURI:        "http://www.w3.org/2012/ldp",
           
           // name (without the @w3c.org) of the public mailing to which comments are due
-          wgPublicList: "spec-writers-anonymous",
+          wgPublicList: "public-ldp-comments",
           
           // URI of the patent status for this WG, for Rec-track documents
           // !!!! IMPORTANT !!!!
           // This is important for Rec-track documents, do not copy a patent URI from a random
           // document unless you know what you're doing. If in doubt ask your friendly neighbourhood
           // Team Contact.
-          wgPatentURI:  "",
+          wgPatentURI:  "http://www.w3.org/Consortium/Patent-Policy-20040205/",
           // !!!! IMPORTANT !!!! MAKE THE ABOVE BLINK IN YOUR HEAD
       };
     </script>
@@ -76,7 +86,7 @@
   <body>
     <section id='abstract'>
       <p>
-        Linked Data Patch (LD Patch) is a patch format for Linked Data.
+Linked Data Patch Format (LD Patch) defines a language for expressing a sequence of operations to apply to a RDF Graph; it is suitable for use with the HTTP PATCH method. The "text/ldpatch" media type is used to identify such Patch documents.
       </p>
     </section>
     
@@ -87,11 +97,52 @@
       </p>
     </section>
     
-    <section id='introduction'>
+    <section class='informative' id='introduction'>
       <h2>Introduction</h2>
       <p>
-        This specification defines Linked Data Patch (LD Patch), a patch format for Linked Data. It is intended to be used with the <a href="https://tools.ietf.org/html/rfc5789">PATCH Method for HTTP</a> but not limited to. This specification includes a concrete syntax, an abstract model and an operational semantics for LD Patch.
+Linked Data "describes a method of publishing structured data so that it can be interlinked and become more useful. It builds upon standard Web technologies such as HTTP, RDF and URIs, but rather than using them to serve web pages for human readers, it extends them to share information in a way that can be read automatically by computers. This enables data from different sources to be connected and queried." (source Wikipedia).
       </p>
+      <p>
+This document defines the Linked Data Patch Format (LD Patch), a patch format for Linked Data. It is suitable for use with HTTP PATCH [@@RFC5789], a method to perform partial modifications to Web resources. The "text/ldpatch" media type is used to identify such Patch documents
+      </p>
+      <p>
+An instance of the LD Patch language (or LD Patch document) defines a list of operations to be performed against an RDF Graph. Operations include Add, Delete, Cut and Update. They operate on nodes and triples belonging to the graph.
+      </p>
+      <p>
+The following is an example of an LD Patch document. 
+
+
+
+
+ A Turtle document is a textual representations of an RDF graph. The following Turtle document describes the relationship between Green Goblin and Spiderman.
+
+      </p>
+      <p>
+        <pre>
+@prefix profile: http://ogp.me/ns/profile# .
+
+<http://example.com/timbl#> a schema:Person ;
+  schema:alternateName "TimBL" ;
+  profile:first_name "Tim" ;
+  profile:last_name "Berners-Lee" ;
+  schema:attendee _:b1, _:b2 .
+
+_:b1 a schema:Event ;
+  schema:name "F2F5 - Linked Data Platform" ;
+  schema:url <https://www.w3.org/2012/ldp/wiki/F2F5> .
+
+_:b2 a schema:Event ;
+  schema:name "TED 2009" ;
+  schema:url <http://conferences.ted.com/TED2009/> .
+        </pre>
+        <pre>
+
+
+
+        </pre>
+      </p>
+
+
       <p id='expressive-power'>
         The scope of LD Patch is intentionally limited when compared to SPARQL Update capabilities. Its expressive power is limited to (relative) RDF Graphs. Matching nodes is achieved using property paths. Nodes can be bound to variables. The language includes support for blank nodes and RDF Lists.
       </p>
