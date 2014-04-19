@@ -98,7 +98,7 @@ Linked Data Patch Format (LD Patch) defines a language for expressing a sequence
     </section>
     
     <section class='informative' id='introduction'>
-      <h2>Introduction</h2>
+      <h1>Introduction</h1>
       <p>
 Linked Data "describes a method of publishing structured data so that it can be interlinked and become more useful. It builds upon standard Web technologies such as HTTP, RDF and URIs, but rather than using them to serve web pages for human readers, it extends them to share information in a way that can be read automatically by computers. This enables data from different sources to be connected and queried." (source Wikipedia).
       </p>
@@ -111,11 +111,11 @@ An instance of the LD Patch language (or LD Patch document) defines a list of op
       <p>
         The following RDF Graph will be used as an example through this specification. It describes the relation between a person named Tim Berners-Lee (denoted by <http://example.org/timbl#>) and two events he attended.
       </p>
-      <pre>
-@prefix schema: <http://schema.org/> .
-@prefix profile: <http://ogp.me/ns/profile#> .
+      <pre class='example'>
+@prefix schema: &lt;http://schema.org/&gt; .
+@prefix profile: &lt;http://ogp.me/ns/profile#&gt; .
 
-<http://example.org/timbl#> a schema:Person ;
+&lt;http://example.org/timbl#&gt; a schema:Person ;
   schema:alternateName "TimBL" ;
   profile:first_name "Tim" ;
   profile:last_name "Berners-Lee" ;
@@ -124,44 +124,46 @@ An instance of the LD Patch language (or LD Patch document) defines a list of op
 
 _:b1  ;
   schema:name "F2F5 - Linked Data Platform" ;
-  schema:url <https://www.w3.org/2012/ldp/wiki/F2F5> .
+  schema:url &lt;https://www.w3.org/2012/ldp/wiki/F2F5&gt; .
 
 _:b2 a schema:Event ;
   schema:name "TED 2009" ;
   schema:startDate "2009-02-04" .
-  schema:url <http://conferences.ted.com/TED2009/> .
+  schema:url &lt;http://conferences.ted.com/TED2009/&gt; .
       </pre>
       <p>
 The following is an example LD Patch document, transferred in an HTTP PATCH request:
       </p>
-      <pre>
+      <pre class='example'>
 PATCH /timbl HTTP/1.1
 Host: example.org
 Content-Length: 326@@
 Content-Type: text/ldpatch
 If-Match: "abc123"
 
-@prefix profile: <http://ogp.me/ns/profile#> .
+@prefix profile: &lt;http://ogp.me/ns/profile#&gt; .
 
-Update <#>/profile:first_name "Tim" "Timothy" .
+Update &lt;#&gt;/profile:first_name "Tim" "Timothy" .
 
-Bind <#>/schema:attendee ?event .
+Bind &lt;#&gt;/schema:attendee ?event .
 Add ?event rdf:type schema:Event .
 
-Bind <http://conferences.ted.com/TED2009/>\schema:url! ?ted .
+Bind &lt;http://conferences.ted.com/TED2009/&gt;\schema:url! ?ted .
 Delete ?ted schema:startDate .
 Add ?ted schema:location [
   schema:name "Long Beach, California";
   schema:geo [ schema:latitude "33.7817" ; schema:longitude "-118.2054" ] .
 ] .
 
-Cut <#>/schema:workLocation .
+Cut &lt;#&gt;/schema:workLocation .
       </pre>
       <p>
+This example introduces many of features of the LD Patch format: @prefix and prefixed names, the Add/Delete/Cut/Update operations, the Bind-ing mechanism, and the use of the Turtle syntax to define Pointed Graphs [@@].
       </p>
 
+    </section>
 
-      <p id='expressive-power'>
+<!--      <p id='expressive-power'>
         The scope of LD Patch is intentionally limited when compared to SPARQL Update capabilities. Its expressive power is limited to (relative) RDF Graphs. Matching nodes is achieved using property paths. Nodes can be bound to variables. The language includes support for blank nodes and RDF Lists.
       </p>
       <p id='design-choices'>
@@ -176,82 +178,41 @@ Cut <#>/schema:workLocation .
           <li></li>
         </ul>
       </p>
-    </section>
 
-    <section id='terminology'>
-      <h2>Terminology</h2>
+-->
+
+       
+    <section class='informative' id='language-features'>
+      <h1>LD Patch format</h1>
       <p>
+A LD Patch document is made of a list of statements, where the order is relevant. Each statement either binds a variable to a set of matching nodes, or defines a modification on the graph.
       </p>
-      <dl class="glossary">
-        <dt>Linked Data</dt>
-        <dd></dd>
-        <dt>Property path</dt>
-        <dd></dd>
-        <dt>Concrete Syntax</dt>
-        <dd></dd>
-        <dt>Abstract Syntax</dt>
-        <dd></dd>
-        <dt>Operational Semantics</dt>
-        <dd></dd>
-        <dt></dt>
-        <dd></dd>
-        <dt></dt>
-        <dd></dd>
-      </dl>
+      <p>
+
+      </p>
+      <h2>Prefixes</h2>
+      <p>
+
+      </p>
+      <h2>Path expressions</h2>
+      <h2>Node matching semantics</h2>
+      <h2>Pointed Graph</h2>
+      <h2>Bind</h2>
+      <h2>Add</h2>
+      <h2>Delete</h2>
+      <h2>Cut</h2>
+      <h2>Update</h2>
     </section>
 
-    <section id='examples'>
-      <h2>LD Patch examples</h2>
-
-      <p>Input Graph</p>
-
-      <pre class="example">
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-
-[] foaf:name "Alexandre" ;
-  foaf:knows <http://bblfish.net/#hjs> .
-
-<http://bblfish.net/#hjs> foaf:name "Henry Story" ;
-  foaf:currentProject <http://webid.info/> .          
-      </pre>
-
-      <p>@@</p>
-
-      <pre class="example">
-DELETE {
-  <http://bblfish.net/#hjs> ?p ?o
-}
-WHERE {
-  <http://bblfish.net/#hjs> ?p ?o
-}
-      </pre>
-
-      <p>Expected Graph</p>
-
-      <pre class="example">
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-[] foaf:name "Alex" ;
-  foaf:knows <http://bblfish.net/#hjs> .
-      </pre>
-
-      <pre class="example">
-
-      </pre>
-
-      <pre class="example">
-
-      </pre>
-
-    </section>
 
     <section id='concrete-syntax'>
-      <h2>Concrete Syntax</h2>
+      <h1>Concrete Syntax</h1>
       <p>
       </p>
     </section>
 
     <section id='abstract-syntax'>
-      <h2>Abstract Syntax</h2>
+      <h1>Abstract Syntax</h1>
       <p>
       </p>
       <pre>
@@ -304,7 +265,7 @@ Option(T) ::= Some(T) | None
     </section>
     
     <section id='operational-semantics'>
-      <h2>Operational Semantics</h2>
+      <h1>Operational Semantics</h1>
       <p>      
 <pre>An Env(ironment) is a Map from Var-s to Node-s
 Env      ::= Map(Var, Set(Node))
@@ -425,7 +386,7 @@ TODO:
     </section>
     
     <section id='operational-semantics'>
-      <h2>Operational Semantics</h2>
+      <h1>Operational Semantics</h1>
       <p>      
         <pre>
 patchDoc ::= prefixID* statement*
