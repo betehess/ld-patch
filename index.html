@@ -186,18 +186,46 @@ WHERE {
       <p>
       </p>
       <pre>
+Add <startingNode>/<p1>/<p2>\<p3>! <predicateToAdd> "valueToAdd" .
+Add <startingNode> <predicateToAdd> "valueToAdd" .
+Delete <startingNode>/<p1>/<p2>\<p3>! <predicate> "valueToAdd" .
+Delete <startingNode>/<p1>/<p2>\<p3>! -<predicate> "valueToAdd" .
+Delete <startingNode>/<p1>/<p2>\<p3>! <predicate> .
+Update <startingNode>/<p1>/<p2>\<p3>! <predicate> "v1" "v2" .
+Bind <startingNode>/<p1>/<p2>\<p3>! ?v .
+(+ list)
+
+Bind <startingNode>/<p1>/<p2>\<p3>! ?v
+Add ?v <predicateToAdd> _:b1 .
+Add _:b1 <foo> <bar> .
+
+Bind <startingNode>/<p1>/<p2>\<p3>! [ <foo> <bar> ] .
+
+NodeSet
+f: (NodeSet, Path) -> NodeSet
+f: ???             -> NodeSet
+
 LDPatch             ::= List(Statement)
-Statement           ::= BindObject | BindSubject | Add | Delete | Clear | Replace
-BindObject          ::= (ConcreteNode, PropertyPath, Var)
-BindSubject         ::= (Var, PropertyPath, ConcreteNode)
-Add                 ::= (VarOrConcreteNode, PropertyPath, ConcreteNode)
-Delete              ::= (VarOrConcreteNode, PropertyPath, VarOrConcreteNode)
-Clear               ::= (VarOrConcreteNode, PropertyPath)
-Replace             ::= (VarOrConcreteNode, PropertyPath, VarOrConcreteNode)
+Statement           ::= Bind | Add | Delete | Update
+Bind                ::= ((VarOrConcreteNode, Path), Var)
+Add                 ::= ((VarOrConcreteNode, Path), OrientedPredicate, Node)
+Delete              ::= ((VarOrConcreteNode, Path), OrientedPredicate, Option(Node))
+Update              ::= ((VarOrConcreteNode, Path), OrientedPredicate, Node, Node)
+OrientedPredicate   ::= (Direction, Uri)
 VarOrConcreteNode   ::= Var | ConcreteNode
 ConcreteNode        ::= Uri | Literal
 Node                ::= Uri | Bnode | Literal
-PropertyPath        ::= List(Uri)
+Path                ::= List(PathElement)
+PathElement         ::= (Direction, Uri, MatchingMode)
+Direction           ::= Forward | BackWard
+MatchingMode        ::= Single | Multiple
+
+Note:
+* no support for [i, j]
+* [i] happens at parsing
+
+Option(T) ::= Some(T) | None
+
       </pre>
 
     </section>
@@ -206,53 +234,76 @@ PropertyPath        ::= List(Uri)
       <h2>Operational Semantics</h2>
       <p>      
 <pre>An Env(ironment) is a Map from Var-s to Node-s
-Env   ::= Map(Var, Node)
+NodeSet  ::= Set(Node)
+Env      ::= Map(Var, NodeSet)
 
 A State is an Env and a Graph
 State ::= (Env, Graph)
 
 get is a function that maps a Var to a Node or a ConcreteNode to itself
-get: Env -> VarOrConcreteNode -> Node
+get: Env -> VarOrConcreteNode -> NodeSet
+get {x -> "foo"} ?x == Set("foo")
+get {x -> "foo"} <bar> == <bar>
+
+matchTriple: Graph -> Option(Node) -> Uri -> Option(Node) -> Set((Node, Uri, Node))
+
++: Graph -> Set(Triple) -> Graph
+
+-: Graph -> Set(Triple) -> Graph
+
+sem_matchingNodes: Graph -> NodeSet -> Path -> NodeSet
+sem_matchingNodes(graph, nodes, List()) = nodes
+sem_matchingNodes(graph, nodes, (Forward, uri, mode) :: restPath) =
+  let triples = { matchTriple(graph, node, uri, ANY) | node ∈ nodes } in
+  let matchingNodes = { o | (s, p, o) ∈ triples } in
+  if mode is Single and size(matchingNodes) is not 1 then throw error
+  sem_matchingNodes(graph, matchingNodes, restPath)
+sem_matchingNodes(graph, nodes, (Backward, uri, mode) :: restPath) =
+  let triples = { matchTriple(graph, ANY, uri, node) | node ∈ nodes } in
+  let matchingNodes = { s | (s, p, o) ∈ triples } in
+  if mode is Single and size(matchingNodes) is not 1 then throw error
+  sem_matchingNodes(graph, matchingNodes, restPath)
+
+makeTriples: NodeSet -> OrientedPredicate -> Node -> Set(Triple)
+makeTriples(nodes, (Forward, uri), node) =
+  { (n, uri, node) | n ∈ nodes }
+makeTriples(nodes, (Backward, uri), node) =
+  { (node, uri, n) | n ∈ nodes }
 
 
-singleSubjectMatch is a function returning the *unique* Node in the subject position matching the given PropertyPath/Node in the given Graph 
-singleSubjectMatch: Graph -> (PropertyPath, Node) -> Node
-
-singleObjectMatch is a function returning the *unique* Node in the object position matching the given Node/PropertyPath in the given Graph 
-singleObjectMatch: Graph -> (Node, PropertyPath) -> Node
-
-objectMatch: Graph -> (Node, PropertyPath) -> List(Node)
-
-a Statement is applied to a Graph in a given Env and return a new (Env, Graph) as the new state
-applyStatement: (Env, Graph) -> Statement -> (Env, Graph)
-
-env: Env
-graph: Graph
+sem_bind: (Env, Graph) -> Bind -> (Env, Graph)
+sem_bind((env, graph), Bind(start, path, v)) =
+  let nodes = sem_matchingNodes(get(graph, env, start), path) in
+  (env[v -> nodes], graph)
 
 
-
-singleObjectMatch(graph, concreteNode, propertyPath) = node
------------------------------------------------------------------------------------- bind-object
-env, graph ::> BindObject(concreteNode, propertyPath, x) --> (env[x -> node], graph)
-
-
-singleSubjectMatch(graph, propertyPath, concreteNode) = node
------------------------------------------------------------------------------------- bind-subject
-env, graph ::> BindObject(concreteNode, propertyPath, x) --> (env[x -> node], graph)
+sem_add: (Env, Graph) -> Add -> (Env, Graph)
+sem_add((env, graph), Add(start, path, orientedPredicate, node)) =
+  let nodes = sem_matchingNodes(get(graph, env, start), path) in  
+  let triples = makeTriples(nodes, orientedPredicate, node) in
+  (env, graph + triples)
 
 
-get(env, subject) = subjectValue
-get(env, object) = objectValue
--------------------------------------------------------------------------------------------------------------- add
-env, graph ::> Add(subject, propertyPath, object) --> (env, graph + (subjectValue, propertyPath, objectValue))
+sem_delete: (Env, Graph) -> Delete -> (Env, Graph)
+sem_delete((env, graph), Delete(start, path, orientedPredicate, optionalNode)) =
+  let nodes = sem_matchingNodes(get(graph, env, start), path) in
+  let triples = { matchTriples(graph, node, orientedPredicate, optionalNode) | node ∈ nodes } in
+  (env, graph - triples)
 
 
-get(env, subject) = subjectValue
-get(env, object) = objectValue
--------------------------------------------------------------------------------------------------------------- delete
-env, graph ::> Delete(subject, propertyPath, object) --> (env, graph + (subjectValue, propertyPath, objectValue))
+sem_update: (Env, Graph) -> Update -> (Env, Graph)
+sem_update((env, graph), Update(start, path, orientedPredicate, node1, node2)) =
+  let nodes = sem_matchingNodes(get(graph, env, start), path) in
+  let triplesToRemove = { matchTriples(graph, node, orientedPredicate, optionalNode) | node ∈ nodes } in
+  let triplesToAdd = makeTriples(nodes, orientedPredicate, node2) in
+  (env, graph - triplesToRemove + triplesToAdd)
 
-.........</pre>
+
+
+
+
+
+        </pre>
       </p>
     </section>
     
