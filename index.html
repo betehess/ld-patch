@@ -234,37 +234,44 @@ Option(T) ::= Some(T) | None
       <h2>Operational Semantics</h2>
       <p>      
 <pre>An Env(ironment) is a Map from Var-s to Node-s
-NodeSet  ::= Set(Node)
-Env      ::= Map(Var, NodeSet)
+Env      ::= Map(Var, Set(Node))
 
-A State is an Env and a Graph
-State ::= (Env, Graph)
+TBD
+---
 
-get is a function that maps a Var to a Node or a ConcreteNode to itself
-get: Env -> VarOrConcreteNode -> NodeSet
-get {x -> "foo"} ?x == Set("foo")
-get {x -> "foo"} <bar> == <bar>
+env[x]
+env[x -> nodes]
 
-matchTriple: Graph -> Option(Node) -> Uri -> Option(Node) -> Set((Node, Uri, Node))
+matchTriples: Graph -> Option(Node) -> Uri -> Option(Node) -> Set((Node, Uri, Node))
+matchTriples: (g: Graph) -> (s: Option(Node)) -> (p: Uri) -> (o: Option(Node)) -> { matchingTriples: Set((Node, Uri, Node)) | triple matches the pattern (s, p, o) in g -> triple ∈ matchingNodes }
 
 +: Graph -> Set(Triple) -> Graph
 
 -: Graph -> Set(Triple) -> Graph
 
-sem_matchingNodes: Graph -> NodeSet -> Path -> NodeSet
+sem functions
+-------------
+
+sem_varOrConcreteNode is a function that maps a Var to a Node or a ConcreteNode to itself
+sem_varOrConcreteNode: Env -> VarOrConcreteNode -> Set(Node)
+sem_varOrConcreteNode(env, v: Var) = env[v]
+sem_varOrConcreteNode(env, uri: Uri) = Set(uri)
+sem_varOrConcreteNode(env, literal: Literal) = Set(literal)
+
+sem_matchingNodes: Graph -> Set(Node) -> Path -> Set(Node)
 sem_matchingNodes(graph, nodes, List()) = nodes
 sem_matchingNodes(graph, nodes, (Forward, uri, mode) :: restPath) =
-  let triples = { matchTriple(graph, node, uri, ANY) | node ∈ nodes } in
+  let triples = { matchTriples(graph, node, uri, ANY) | node ∈ nodes } in
   let matchingNodes = { o | (s, p, o) ∈ triples } in
   if mode is Single and size(matchingNodes) is not 1 then throw error
   sem_matchingNodes(graph, matchingNodes, restPath)
 sem_matchingNodes(graph, nodes, (Backward, uri, mode) :: restPath) =
-  let triples = { matchTriple(graph, ANY, uri, node) | node ∈ nodes } in
+  let triples = { matchTriples(graph, ANY, uri, node) | node ∈ nodes } in
   let matchingNodes = { s | (s, p, o) ∈ triples } in
   if mode is Single and size(matchingNodes) is not 1 then throw error
   sem_matchingNodes(graph, matchingNodes, restPath)
 
-makeTriples: NodeSet -> OrientedPredicate -> Node -> Set(Triple)
+makeTriples: Set(Node) -> OrientedPredicate -> Node -> Set(Triple)
 makeTriples(nodes, (Forward, uri), node) =
   { (n, uri, node) | n ∈ nodes }
 makeTriples(nodes, (Backward, uri), node) =
@@ -273,35 +280,53 @@ makeTriples(nodes, (Backward, uri), node) =
 
 sem_bind: (Env, Graph) -> Bind -> (Env, Graph)
 sem_bind((env, graph), Bind(start, path, v)) =
-  let nodes = sem_matchingNodes(get(graph, env, start), path) in
+  let nodes = sem_matchingNodes(sem_varOrConcreteNode(graph, env, start), path) in
   (env[v -> nodes], graph)
-
 
 sem_add: (Env, Graph) -> Add -> (Env, Graph)
 sem_add((env, graph), Add(start, path, orientedPredicate, node)) =
-  let nodes = sem_matchingNodes(get(graph, env, start), path) in  
+  let nodes = sem_matchingNodes(sem_varOrConcreteNode(graph, env, start), path) in  
   let triples = makeTriples(nodes, orientedPredicate, node) in
   (env, graph + triples)
 
 
 sem_delete: (Env, Graph) -> Delete -> (Env, Graph)
 sem_delete((env, graph), Delete(start, path, orientedPredicate, optionalNode)) =
-  let nodes = sem_matchingNodes(get(graph, env, start), path) in
+  let nodes = sem_matchingNodes(sem_varOrConcreteNode(graph, env, start), path) in
   let triples = { matchTriples(graph, node, orientedPredicate, optionalNode) | node ∈ nodes } in
   (env, graph - triples)
 
 
 sem_update: (Env, Graph) -> Update -> (Env, Graph)
 sem_update((env, graph), Update(start, path, orientedPredicate, node1, node2)) =
-  let nodes = sem_matchingNodes(get(graph, env, start), path) in
+  let nodes = sem_matchingNodes(sem_varOrConcreteNode(graph, env, start), path) in
   let triplesToRemove = { matchTriples(graph, node, orientedPredicate, optionalNode) | node ∈ nodes } in
   let triplesToAdd = makeTriples(nodes, orientedPredicate, node2) in
   (env, graph - triplesToRemove + triplesToAdd)
 
+sem_patch: Graph -> List(Statement) -> Graph
+sem_patch(g, statements) = sem_patch_state(({}, g), statements)
+
+sem_statement: (Env, Graph) -> Statement -> (Env, Graph)
+sem_statement(state, bind: Bind) = sem_bind(state, bind)
+sem_statement(state, add: Add) = sem_bind(state, add)
+sem_statement(state, delete: Delete) = sem_bind(state, delete)
+sem_statement(state, update: Update) = sem_bind(state, update)
+
+sem_patch_state: (Env, Graph) -> List(Statement) -> Graph
+sem_patch_state((env, graph), List()) = graph
+sem_patch_state(state, statement :: restStatements) =
+  let newState = sem_statement(state, statement) in
+  sem_patch_state(newState, restStatements)
 
 
 
 
+TODO:
+* runtime error
+* parsing error
+* grammar
+* lists
 
         </pre>
       </p>
