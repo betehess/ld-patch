@@ -2,7 +2,7 @@
 
 The examples for the proposed syntax is given for the following document:
 
-```
+~~~
 @prefix schema: <http://schema.org/> .
 @prefix profile: <http://ogp.me/ns/profile#> .
 
@@ -21,7 +21,7 @@ _:b2 a schema:Event ;
   schema:name "TED 2009" ;
   schema:startDate "2009-02-04" .
   schema:url <http://conferences.ted.com/TED2009/> .
-```
+~~~
 
 ## Custom syntax
 
