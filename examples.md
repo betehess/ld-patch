@@ -31,7 +31,7 @@ _:b2 a schema:Event ;
 
 This was our first attempt, which evolved from [Pierre-Antoine's solution](https://github.com/pchampin/rdfpatch).
 
-```
+~~~
 PATCH /timbl HTTP/1.1
 Host: example.org
 Content-Length: 326@@
@@ -53,7 +53,7 @@ Add ?ted schema:location [
 ] .
 
 Cut <#>/schema:workLocation .
-```
+~~~
 
 ## RDF-encoded LD Patch
 
@@ -61,7 +61,7 @@ Here LD Patch is defined in RDF. We show here the output as JSON-LD and Turtle (
 
 ### JSON-LD
 
-```
+~~~
 {
   "@context": {
     "@base": "http://example.org/timbl",
@@ -91,11 +91,11 @@ Here LD Patch is defined in RDF. We show here the output as JSON-LD and Turtle (
     { "@type": "patch:Cut", "start": { "@id": "#me" }, "predicate": "schema:workLocation" }
   ]
 }
-```
+~~~
 
 ## Turtle
 
-```
+~~~
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix patch: <http://www.w3.org/ns/ldpatch#> .
 
@@ -150,4 +150,4 @@ Here LD Patch is defined in RDF. We show here the output as JSON-LD and Turtle (
         ]
     ) .
 
-```
+~~~
