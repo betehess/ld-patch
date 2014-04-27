@@ -65,7 +65,7 @@ Here LD Patch is defined in RDF. We show here the output as JSON-LD and Turtle (
     "patch": "http://www.w3.org/ns/ldpatch#",
     "ops": { "@container": "@list" },
     "predicate": { "@type": "@id" },
-    "path": { "@type": "patch:path" },
+    "path": { "@type": "patch:Path" },
     
     "profile": "http://ogp.me/ns/profile#",
     "schema": "http://schema.org/",
@@ -106,7 +106,7 @@ Here LD Patch is defined in RDF. We show here the output as JSON-LD and Turtle (
         ]
         [
             a patch:Bind ;
-            patch:path "/schema:attendee"^^patch:path ;
+            patch:path "/schema:attendee"^^patch:Path ;
             patch:start <http://example.org/timbl#me> ;
             patch:value [ _:b3 a patch:Variable ]
         ]
@@ -118,7 +118,7 @@ Here LD Patch is defined in RDF. We show here the output as JSON-LD and Turtle (
         ]
         [
             a patch:Bind ;
-            patch:path "\\schema:url!"^^patch:path ;
+            patch:path "\\schema:url!"^^patch:Path ;
             patch:start <http://conferences.ted.com/TED2009/> ;
             patch:value [ _:b6 a patch:Variable ]
         ]
