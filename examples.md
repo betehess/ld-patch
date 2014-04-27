@@ -1,5 +1,7 @@
 ## Initial document 
- 
+
+The examples for the proposed syntax is given for the following document:
+
 ```
 @prefix schema: <http://schema.org/> .
 @prefix profile: <http://ogp.me/ns/profile#> .
@@ -23,6 +25,8 @@ _:b2 a schema:Event ;
 
 ## Custom syntax
 
+This was our first attempt, which evolved from [Pierre-Antoine's solution](https://github.com/pchampin/rdfpatch).
+
 ```
 PATCH /timbl HTTP/1.1
 Host: example.org
@@ -32,7 +36,7 @@ If-Match: "abc123"
 
 @prefix profile: <http://ogp.me/ns/profile#> .
 
-Update <#me>/profile:first_name "Tim" "Timothy" .
+Update <#me> profile:first_name "Tim" "Timothy" .
 
 Bind <#me>/schema:attendee ?event .
 Add ?event rdf:type schema:Event .
@@ -47,7 +51,11 @@ Add ?ted schema:location [
 Cut <#>/schema:workLocation .
 ```
 
-##
+## RDF-encoded LD Patch
+
+Here LD Patch is defined in RDF. We show here the output as JSON-LD and Turtle (they would be completely equivalent).
+
+### JSON-LD
 
 ```
 {
@@ -81,7 +89,7 @@ Cut <#>/schema:workLocation .
 }
 ```
 
-##
+## Turtle
 
 ```
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
