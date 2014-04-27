@@ -62,7 +62,7 @@ Here LD Patch is defined in RDF. We show here the output as JSON-LD and Turtle (
   "@context": {
     "@base": "http://example.org/timbl",
     "@vocab": "http://www.w3.org/ns/ldpatch#",
-    "": "http://www.w3.org/ns/ldpatch#",
+    "patch": "http://www.w3.org/ns/ldpatch#",
     "ops": { "@container": "@list" },
     "op": { "@type": "@id" },
     "predicate": { "@type": "@id" },
@@ -75,18 +75,18 @@ Here LD Patch is defined in RDF. We show here the output as JSON-LD and Turtle (
   },
   "@type": ":Patch",
   "ops": [
-    { "op": ":update", "start": { "@id": "#me" }, "predicate": "profile:first_name", "match": "Tim", "value": "Timothy" },
-    { "op": ":bind", "start": { "@id": "#me" }, "path": "/schema:attendee", "var": "event" },
-    { "op": ":add", "start": { "@id": "schema:Event" }, "inversePredicate": "rdf:type", "value": { "var": "event" } },
-    { "op": ":bind", "start": { "@id": "http://conferences.ted.com/TED2009/" }, "path": "\\schema:url!", "var": "ted" },
-    { "op": ":delete", "start": { "var": "ted" }, "value": { "@id": "schema:startDate" } },
-    { "op": ":add", "start": { "var": "ted" }, "predicate": "schema:location",
+    { "op": "patch:update", "start": { "@id": "#me" }, "predicate": "profile:first_name", "match": "Tim", "value": "Timothy" },
+    { "op": "patch:bind", "start": { "@id": "#me" }, "path": "/schema:attendee", "var": "event" },
+    { "op": "patch:add", "start": { "@id": "schema:Event" }, "inversePredicate": "rdf:type", "value": { "var": "event" } },
+    { "op": "patch:bind", "start": { "@id": "http://conferences.ted.com/TED2009/" }, "path": "\\schema:url!", "var": "ted" },
+    { "op": "patch:delete", "start": { "var": "ted" }, "value": { "@id": "schema:startDate" } },
+    { "op": "patch:add", "start": { "var": "ted" }, "predicate": "schema:location",
       "value": {
         "schema:name": "Long Beach, California",
         "schema:geo": { "schema:latitude": "33.7817", "schema:longitude": "-118.2054" }
       }
     },
-    { "op": ":cut", "start": { "@id": "#me" }, "predicate": "schema:workLocation" }
+    { "op": "patch:cut", "start": { "@id": "#me" }, "predicate": "schema:workLocation" }
   ]
 }
 ```
