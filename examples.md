@@ -39,7 +39,7 @@ If-Match: "abc123"
 Update <#me> profile:first_name "Tim" "Timothy" .
 
 Bind <#me>/schema:attendee ?event .
-Add ?event rdf:type schema:Event .
+Add schema:Event -rdf:type ?event .
 
 Bind <http://conferences.ted.com/TED2009/>\schema:url! ?ted .
 Delete ?ted schema:startDate .
@@ -62,7 +62,7 @@ Here LD Patch is defined in RDF. We show here the output as JSON-LD and Turtle (
   "@context": {
     "@base": "http://example.org/timbl",
     "@vocab": "http://www.w3.org/ns/ldpatch#",
-    "patch": "http://www.w3.org/ns/ldpatch#",
+    "": "http://www.w3.org/ns/ldpatch#",
     "ops": { "@container": "@list" },
     "op": { "@type": "@id" },
     "predicate": { "@type": "@id" },
@@ -73,18 +73,20 @@ Here LD Patch is defined in RDF. We show here the output as JSON-LD and Turtle (
     "schema": "http://schema.org/",
     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   },
+  "@type": ":Patch",
   "ops": [
-    { "op": "patch:update", "startingNode": { "@id": "#me" }, "predicate": "profile:first_name", "matchingNode": "Tim", "value": "Timothy" },
-    { "op": "patch:bind", "startingNode": { "@id": "#me" }, "path": "/schema:attendee", "var": "event" },
-    { "op": "patch:add", "startingNode": { "var": "event" }, "predicate": "rdf:type", "value": { "@id": "schema:Event" } },
-    { "op": "patch:bind", "startingNode": { "@id": "http://conferences.ted.com/TED2009/" }, "path": "\\schema:url!", "var": "ted" },
-    { "op": "patch:delete", "startingNode": { "var": "ted" }, "value": { "@id": "schema:startDate" } },
-    { "op": "patch:add", "startingNode": { "var": "ted" }, "predicate": "schema:location",
+    { "op": ":update", "start": { "@id": "#me" }, "predicate": "profile:first_name", "match": "Tim", "value": "Timothy" },
+    { "op": ":bind", "start": { "@id": "#me" }, "path": "/schema:attendee", "var": "event" },
+    { "op": ":add", "start": { "@id": "schema:Event" }, "inversePredicate": "rdf:type", "value": { "var": "event" } },
+    { "op": ":bind", "start": { "@id": "http://conferences.ted.com/TED2009/" }, "path": "\\schema:url!", "var": "ted" },
+    { "op": ":delete", "start": { "var": "ted" }, "value": { "@id": "schema:startDate" } },
+    { "op": ":add", "start": { "var": "ted" }, "predicate": "schema:location",
       "value": {
         "schema:name": "Long Beach, California",
         "schema:geo": { "schema:latitude": "33.7817", "schema:longitude": "-118.2054" }
       }
-    }
+    },
+    { "op": ":cut", "start": { "@id": "#me" }, "predicate": "schema:workLocation" }
   ]
 }
 ```
@@ -96,36 +98,37 @@ Here LD Patch is defined in RDF. We show here the output as JSON-LD and Turtle (
 @prefix patch: <http://www.w3.org/ns/ldpatch#> .
 
 []
+    a patch:Patch ;
     patch:ops ([
-            patch:matchingNode "Tim" ;
+            patch:match "Tim" ;
             patch:op patch:update ;
             patch:predicate <http://ogp.me/ns/profile#first_name> ;
-            patch:startingNode <http://example.org/timbl#> ;
+            patch:start <http://example.org/timbl#me> ;
             patch:value "Timothy"
         ]
         [
             patch:op patch:bind ;
-            patch:path "/schema:attendee"^^patch:path ;
-            patch:startingNode <http://example.org/timbl#> ;
+            patch:path "/schema:attendee"^^<patch:path> ;
+            patch:start <http://example.org/timbl#me> ;
             patch:var <http://example.org/event>
         ]
         [
+            patch:inversePredicate "rdf:type" ;
             patch:op patch:add ;
-            patch:predicate rdf:type ;
-            patch:startingNode [
+            patch:start <http://schema.org/Event> ;
+            patch:value [
                 patch:var <http://example.org/event>
-            ] ;
-            patch:value <http://schema.org/Event>
+            ]
         ]
         [
             patch:op patch:bind ;
-            patch:path "\\schema:url!"^^patch:path ;
-            patch:startingNode <http://conferences.ted.com/TED2009/> ;
+            patch:path "\\schema:url!"^^<patch:path> ;
+            patch:start <http://conferences.ted.com/TED2009/> ;
             patch:var <http://example.org/ted>
         ]
         [
             patch:op patch:delete ;
-            patch:startingNode [
+            patch:start [
                 patch:var <http://example.org/ted>
             ] ;
             patch:value <http://schema.org/startDate>
@@ -133,7 +136,7 @@ Here LD Patch is defined in RDF. We show here the output as JSON-LD and Turtle (
         [
             patch:op patch:add ;
             patch:predicate <http://schema.org/location> ;
-            patch:startingNode [
+            patch:start [
                 patch:var <http://example.org/ted>
             ] ;
             patch:value [
@@ -143,6 +146,11 @@ Here LD Patch is defined in RDF. We show here the output as JSON-LD and Turtle (
                 ] ;
                 <http://schema.org/name> "Long Beach, California"
             ]
+        ]
+        [
+            patch:op patch:cut ;
+            patch:predicate <http://schema.org/workLocation> ;
+            patch:start <http://example.org/timbl#me>
         ]
     ) .
 ```
