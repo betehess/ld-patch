@@ -1,3 +1,7 @@
+---
+title: LD Patch Syntaxes
+---
+
 ## Initial document 
 
 The examples for the proposed syntax is given for the following document:
