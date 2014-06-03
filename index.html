@@ -46,6 +46,13 @@
               ,   companyURL: "http://www.pellucid.com"
               },
               {
+                  name:       "Pierre-Antoine Champin"
+              ,   url:        "http://liris.cnrs.fr/~pchampin/en/"
+//              ,   mailto:     "@@@"
+              ,   company:    "Université de Lyon"
+//              ,   companyURL: "@@@"
+              },
+              {
                   name:       "Andrei Sambra"
               ,   url:        "https://deiu.rww.io/profile/card#me"
               ,   mailto:     "andrei@fcns.eu"
@@ -54,16 +61,6 @@
               },
           ],
 
-          authors:  [
-              {
-                  name:       "Pierre-Antoine Champin"
-              ,   url:        "http://liris.cnrs.fr/~pchampin/en/"
-//              ,   mailto:     "@@@"
-              ,   company:    "Université de Lyon"
-//              ,   companyURL: "@@@"
-              },
-          ],
-          
           // name of the WG
           wg:           "Linked Data Platform Working Group",
           
@@ -103,13 +100,13 @@ Linked Data Patch Format (LD Patch) defines a language for expressing a sequence
 Linked Data "describes a method of publishing structured data so that it can be interlinked and become more useful. It builds upon standard Web technologies such as HTTP, RDF and URIs, but rather than using them to serve web pages for human readers, it extends them to share information in a way that can be read automatically by computers. This enables data from different sources to be connected and queried." (source Wikipedia).
       </p>
       <p>
-This document defines the Linked Data Patch Format (LD Patch), a patch format for Linked Data. It is suitable for use with HTTP PATCH [@@RFC5789], a method to perform partial modifications to Web resources. The "text/ldpatch" media type is used to identify such Patch documents
+This document defines the Linked Data Patch Format (LD Patch), a patch format for Linked Data. It is suitable for use with HTTP PATCH [@@RFC5789], a method to perform partial modifications to Web resources. The "text/ldpatch" media type is used to identify such LD Patch documents.
       </p>
       <p>
-An instance of the LD Patch language (or LD Patch document) defines a list of operations to be performed against an RDF Graph. Operations include Add, Delete, Cut and Update. They operate on nodes and triples belonging to the graph.
+An instance of the LD Patch language (or LD Patch document) defines a list of operations to be performed against an RDF Graph. Operations include @@@. They operate on nodes and triples belonging to the graph.
       </p>
       <p>
-        The following RDF Graph will be used as an example through this specification. It describes the relation between a person named Tim Berners-Lee (denoted by <http://example.org/timbl#>) and two events he attended.
+        The following RDF Graph will be used as an example through this specification. It describes the relation between a person named Tim Berners-Lee (denoted by &lt;http://example.org/timbl#&gt;) and two events he attended.
       </p>
       <pre class='example'>
 @prefix schema: &lt;http://schema.org/&gt; .
@@ -143,7 +140,7 @@ If-Match: "abc123"
 
 @prefix profile: &lt;http://ogp.me/ns/profile#&gt; .
 
-Update &lt;#&gt;/profile:first_name "Tim" "Timothy" .
+Update &lt;#&gt; profile:first_name "Tim" "Timothy" .
 
 Bind &lt;#&gt;/schema:attendee ?event .
 Add ?event rdf:type schema:Event .
@@ -158,7 +155,7 @@ Add ?ted schema:location [
 Cut &lt;#&gt;/schema:workLocation .
       </pre>
       <p>
-This example introduces many of features of the LD Patch format: @prefix and prefixed names, the Add/Delete/Cut/Update operations, the Bind-ing mechanism, and the use of the Turtle syntax to define Pointed Graphs [@@].
+This example introduces many of features of the LD Patch format: @prefix and prefixed names, the @@@ operations, the Bind-ing mechanism, @@@.
       </p>
 
     </section>
@@ -209,65 +206,123 @@ A LD Patch document is made of a list of statements, where the order is relevant
       <h1>Concrete Syntax</h1>
       <p>
       </p>
+      <pre>
+LDPatch ::= Prologue Statement*
+Prologue ::= Prefix*
+Prefix ::= "Prefix" PNAME_NS IRIREF
+Statement ::= Bind | Add | Delete | Replace
+Bind ::= "Bind" Var Value Path?
+Add ::= "Add" Subject Predicate ( Object | List )
+Delete ::= "Delete" Subject Predicate Object
+Replace ::= "Replace" Subject Predicate Slice List
+
+Subject ::= iri | BlankNode | Var
+Predicate ::= iri
+Object ::= iri | BlankNode | literal | Var
+Value ::= iri | literal | Var
+List ::= '(' Object* ')'
+
+Path ::= ( Step | Constraint )*
+Step ::= '/' ( '-' iri | iri | INDEX )
+Constraint ::= '[' Path ( '=' Value )? ']' | '!'
+
+Slice ::= INDEX? '&gt;' INDEX?
+INDEX ::= [0-9]+
+
+// copied from SPARQL
+
+// supposed to be `Var ::= VAR1 | VAR2` but here only VAR1
+Var ::= '?' VARNAME
+VARNAME ::= ( PN_CHARS_U | [0-9] ) ( PN_CHARS_U | [0-9] | #x00B7 | [#x0300-#x036F] | [#x203F-#x2040] )*
+
+// copied from Turtle
+
+literal ::= RDFLiteral | NumericLiteral | BooleanLiteral
+NumericLiteral ::= INTEGER | DECIMAL | DOUBLE
+RDFLiteral ::= String (LANGTAG | '^^' iri)?
+BooleanLiteral ::= 'true' | 'false'
+String ::= STRING_LITERAL_QUOTE | STRING_LITERAL_SINGLE_QUOTE | STRING_LITERAL_LONG_SINGLE_QUOTE | STRING_LITERAL_LONG_QUOTE
+iri ::= IRIREF | PrefixedName
+PrefixedName ::= PNAME_LN | PNAME_NS
+BlankNode ::= BLANK_NODE_LABEL | ANON
+IRIREF ::= '&lt;' ([^#x00-#x20&lt;&gt;"{}|^`\] | UCHAR)* '&gt;' /* #x00=NULL #01-#x1F=control codes #x20=space */
+PNAME_NS ::= PN_PREFIX? ':'
+PNAME_LN ::= PNAME_NS PN_LOCAL
+BLANK_NODE_LABEL ::= '_:' (PN_CHARS_U | [0-9]) ((PN_CHARS | '.')* PN_CHARS)?
+LANGTAG ::= '@' [a-zA-Z]+ ('-' [a-zA-Z0-9]+)*
+INTEGER ::= [+-]? [0-9]+
+DECIMAL ::= [+-]? [0-9]* '.' [0-9]+
+DOUBLE ::= [+-]? ([0-9]+ '.' [0-9]* EXPONENT | '.' [0-9]+ EXPONENT | [0-9]+ EXPONENT)
+EXPONENT ::= [eE] [+-]? [0-9]+
+STRING_LITERAL_QUOTE ::= '"' ([^#x22#x5C#xA#xD] | ECHAR | UCHAR)* '"'      /* #x22=" #x5C=\ #xA=new line #xD=carriage return */
+STRING_LITERAL_SINGLE_QUOTE ::= "'" ([^#x27#x5C#xA#xD] | ECHAR | UCHAR)* "'"      /* #x27=' #x5C=\ #xA=new line #xD=carriage return */
+STRING_LITERAL_LONG_SINGLE_QUOTE ::= "'''" (("'" | "''")? ([^'\] | ECHAR | UCHAR))* "'''"
+STRING_LITERAL_LONG_QUOTE ::= '"""' (('"' | '""')? ([^"\] | ECHAR | UCHAR))* '"""'
+UCHAR ::= '\\u' HEX HEX HEX HEX | '\\U' HEX HEX HEX HEX HEX HEX HEX HEX
+ECHAR ::= '\' [tbnrf"'\]
+WS ::= #x20 | #x9 | #xD | #xA /* #x20=space #x9=character tabulation #xD=carriage return #xA=new line */
+ANON ::= '[' WS* ']'
+PN_CHARS_BASE ::= [A-Z] | [a-z] | [#x00C0-#x00D6] | [#x00D8-#x00F6] | [#x00F8-#x02FF] | [#x0370-#x037D] | [#x037F-#x1FFF] | [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF]
+PN_CHARS_U ::= PN_CHARS_BASE | '_'
+PN_CHARS ::= PN_CHARS_U | '-' | [0-9] | #x00B7 | [#x0300-#x036F] | [#x203F-#x2040]
+PN_PREFIX ::= PN_CHARS_BASE ((PN_CHARS | '.')* PN_CHARS)?
+PN_LOCAL ::= (PN_CHARS_U | ':' | [0-9] | PLX) ((PN_CHARS | '.' | ':' | PLX)* (PN_CHARS | ':' | PLX))?
+PLX ::= PERCENT | PN_LOCAL_ESC
+PERCENT ::= '%' HEX HEX
+HEX ::= [0-9] | [A-F] | [a-f]
+PN_LOCAL_ESC ::= '\' ('_' | '~' | '.' | '-' | '!' | '$' | '&amp;' | "'" | '(' | ')' | '*' | '+' | ',' | ';' | '=' | '/' | '?' | '#' | '@' | '%')
+      </pre>
     </section>
 
     <section id='abstract-syntax'>
       <h1>Abstract Syntax</h1>
       <p>
+The LD Patch data model makes use of the commonly defined <a href="http://en.wikipedia.org/wiki/Abstract_data_type">Abstract Data Types</a> <a href="http://en.wikipedia.org/wiki/Set_(computer_science)">Set</a>, <a href="http://en.wikipedia.org/wiki/List_(computer_science)">List</a> and <a href="http://en.wikipedia.org/wiki/Option_type">Option</a>, used here as type constructors. For example, <code>Set(A)</code> denotes the type for the sets of elements of type <code>A</code>. We assume that they come with their common operations, such as the function <code>size&nbsp;:&nbsp;Set&nbsp;→&nbsp;Int</code>.					
       </p>
       <pre>
-Add <startingNode>/<p1>/<p2>\<p3>! <predicateToAdd> "valueToAdd" .
-Add <startingNode> <predicateToAdd> "valueToAdd" .
-Delete <startingNode>/<p1>/<p2>\<p3>! <predicate> "valueToAdd" .
-Delete <startingNode>/<p1>/<p2>\<p3>! -<predicate> "valueToAdd" .
-Delete <startingNode>/<p1>/<p2>\<p3>! <predicate> .
-Update <startingNode>/<p1>/<p2>\<p3>! <predicate> "v1" "v2" .
-Bind <startingNode>/<p1>/<p2>\<p3>! ?v .
-(+ list)
+LDPatch ::= List(Statement)
 
-Bind <startingNode>/<p1>/<p2>\<p3>! ?v
-Add ?v <predicateToAdd> _:b1 .
-Add _:b1 <foo> <bar> .
+Statement ::= Add | AddList | Delete | Bind | Replace
+Add       ::= (Subject, Predicate, Object)
+AddList   ::= (Subject, Predicate, List(Object))
+Delete    ::= (Subject, Predicate, Object)
+Bind      ::= (Var, Value, Path)
+Replace   ::= (Subject, Predicate, Slice, List(Object))
 
-Bind <startingNode>/<p1>/<p2>\<p3>! [ <foo> <bar> ] .
+Path         ::= List(PathElement)
+PathElement  ::= Step | Constraint
+Step         ::= StepForward | StepBackward | StepAt
+Constraint   ::= Filter | UNICITY_CONSTRAINT
+StepForward  ::= IRI
+StepBackward ::= IRI
+StepAt       ::= Integer
+Filter       ::= (Path, Option(Value))
 
-NodeSet
-f: (NodeSet, Path) -> NodeSet
-f: ???             -> NodeSet
+Slice            ::= Range | EverythingBefore | EverythingAfter | END
+Range            ::= (Integer, Integer)
+EverythingBefore ::= Integer
+EverythingAfter  ::= Integer
 
-LDPatch             ::= List(Statement)
-Statement           ::= Bind | Add | Delete | Update
-Bind                ::= (VarOrConcreteNode, Path, Var)
-Add                 ::= (VarOrConcreteNode, Path, OrientedPredicate, PointedGraph)
-Delete              ::= (VarOrConcreteNode, Path, OrientedPredicate, Option(PointedGraph))
-Update              ::= (VarOrConcreteNode, PointedGraph)
-Cut                 ::= VarOrConcreteNode
-PointedGraph        ::= (Node, Graph)
-Graph               ::= Set(Triple)
-Triple              ::= (Node, Node, Node)
-OrientedPredicate   ::= (Direction, Uri)
-VarOrConcreteNode   ::= Var | ConcreteNode
-ConcreteNode        ::= Uri | Literal
-Node                ::= Uri | Bnode | Literal
-Path                ::= List(PathElement)
-PathElement         ::= (Direction, Uri, MatchingMode)
-Direction           ::= Forward | BackWard
-MatchingMode        ::= Single | Multiple
+Subject   ::= IRI | BlankNode | Var
+Predicate ::= IRI
+Object    ::= IRI | BlankNode | Literal | Var
+Value     ::= IRI | Literal | Var
 
-Note:
-* no support for [i, j]
-* [i] happens at parsing
-
-Option(T) ::= Some(T) | None
-
+Var       ::= String
+IRI       ::= RDF URI-reference http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#section-IRIs as subsequently restricted by SPARQL http://www.w3.org/TR/rdf-sparql-query/#docTerminology
+BlankNode ::= RDF blank node http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#section-blank-nodes
+Literal   ::= RDF Literal http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#section-Graph-Literal
+String    ::= a Unicode String
       </pre>
 
     </section>
     
     <section id='operational-semantics'>
       <h1>Operational Semantics</h1>
-      <p>      
-<pre>An Env(ironment) is a Map from Var-s to Node-s
+      <p>
+The denotational RDF semantics makes use of the <a href="http://en.wikipedia.org/wiki/Set-builder_notation">set-builder notation</a> for building the RDF sets.
+      </p>
+<!--pre>An Env(ironment) is a Map from Var-s to Node-s
 Env      ::= Map(Var, Set(Node))
 
 TBD
@@ -381,37 +436,9 @@ TODO:
 * examples
 * best practices
 
-        </pre>
-      </p>
+        </pre-->
     </section>
     
-    <section id='operational-semantics'>
-      <h1>Operational Semantics</h1>
-      <p>      
-        <pre>
-patchDoc ::= prefixID* statement*
-statement ::= bind | add | delete | update
-bind ::= 'Bind' varOrConcreteNode path var '.'
-add ::= 'Add' varOrConcreteNode path orientedPredicate pointedGraph
-delete ::= 'Delete' varOrConcreteNode path orientedPredicate pointedGraph?
-update ::= 'Update' varOrConcreteNode pointedGraph
-cut ::= 'Cut' varOrConcreteNode
-
-pointedGraph ::= iri | RDFLiteral | triples
-
-path ::= pathElement*
-pathElement ::= direction iri '!'?
-direction ::= '/' | '\'
-orientedPredicate ::= '-'? iri
-
-varOrConcreteNode ::= var | concreteNode
-concreteNode ::= iri | RDFLiteral
-
-var ::= '?' [a-zA-Z]+ ('-' [a-zA-Z0-9]+)*
-
-        </pre>
-      </p>
-    </section>
 
   </body>
 </html>
