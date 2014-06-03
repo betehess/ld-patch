@@ -55,7 +55,7 @@
               {
                   name:       "Andrei Sambra"
               ,   url:        "https://deiu.rww.io/profile/card#me"
-              ,   mailto:     "andrei@fcns.eu"
+              ,   mailto:     "asambra@mit.edu"
               ,   company:    "MIT"
               ,   companyURL: "http://web.mit.edu"
               },
@@ -140,23 +140,48 @@ If-Match: "abc123"
 
 @prefix profile: &lt;http://ogp.me/ns/profile#&gt; .
 
-Update &lt;#&gt; profile:first_name "Tim" "Timothy" .
+Replace &lt;#&gt; profile:first_name 0> ( "Timothy" ) .
 
-Bind &lt;#&gt;/schema:attendee ?event .
+Bind ?event &lt;#&gt; schema:attendee .
 Add ?event rdf:type schema:Event .
 
-Bind &lt;http://conferences.ted.com/TED2009/&gt;\schema:url! ?ted .
-Delete ?ted schema:startDate .
+Bind ?ted &lt;http://conferences.ted.com/TED2009/&gt; /-schema:url! .
+Delete ?ted schema:startDate "2009-02-04".
 Add ?ted schema:location [
   schema:name "Long Beach, California";
   schema:geo [ schema:latitude "33.7817" ; schema:longitude "-118.2054" ] .
 ] .
-
-Cut &lt;#&gt;/schema:workLocation .
       </pre>
       <p>
 This example introduces many of features of the LD Patch format: @prefix and prefixed names, the @@@ operations, the Bind-ing mechanism, @@@.
       </p>
+      <p>
+The following is the resulting (patched) document.
+      </p>
+      <pre class='example'>
+@prefix schema: &lt;http://schema.org/&gt; .
+@prefix profile: &lt;http://ogp.me/ns/profile#&gt; .
+
+&lt;http://example.org/timbl#&gt; a schema:Person ;
+  schema:alternateName "TimBL" ;
+  profile:first_name "Timothy" ;
+  profile:last_name "Berners-Lee" ;
+  schema:workLocation [ schema:name "W3C/MIT" ] ;
+  schema:attendee _:b1, _:b2 .
+
+_:b1  ;
+  schema:name "F2F5 - Linked Data Platform" ;
+  schema:url &lt;https://www.w3.org/2012/ldp/wiki/F2F5&gt; .
+
+_:b2 a schema:Event ;
+  schema:name "TED 2009" ;
+  schema:url &lt;http://conferences.ted.com/TED2009/&gt; ;
+  schema:location [
+    schema:name "Long Beach, California";
+    schema:geo [ schema:latitude "33.7817" ; schema:longitude "-118.2054" ] .
+  ] .
+      </pre>
+
 
     </section>
 
