@@ -214,15 +214,77 @@ A LD Patch document is made of a list of statements, where the order is relevant
       </p>
       <h2>Prefixes</h2>
       <p>
-
+LD Patch offers the possibility to abbreviate URIs by using Turtle's <i>@prefix</i> directive that allows declaring a short prefix name for a long prefix of repeated URIs. This is useful for many RDF vocabularies that are all defined in nearby namespace URIs, possibly using XML's namespace mechanism that works in a similar fashion.
       </p>
+      <p>
+Once a prefix such as <code>@prefix foo: &lt;http://example.org/ns#&gt;</code> is defined, any mention of a URI later in the document may use a qualified name that starts <code>foo:</code> to stand for the longer URI. So for example, the qualified name <code>foo:bar</code> is a shorthand for the URI <code>http://example.org/ns#bar</code>.
+      </p>
+
       <h2>Path expressions</h2>
+      <p>
+      </p>
+
       <h2>Node matching semantics</h2>
+      <p>
+      </p>
+
       <h2>Pointed Graph</h2>
+      <p>
+      </p>
+
       <h2>Bind</h2>
+      <p>
+The <strong>Bind</strong> operation is used to create a new variable by binding or assigning an RDF Term to the variable. The bind variable has a global scope. Use of a given variable name anywhere in a query identifies the same variable. Following the example above, the Bind operation creates a new variable called <code>event</code>, starting from the RDF Term <code>&lt;#&gt;</code> and following the path expression <code>/schema:attendee/[schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]</code> in order to identify the RDF Term to which this varible will point -- i.e. <code>_:b2</code>.
+      <pre class='example'>
+...
+Bind ?event &lt;#&gt; /schema:attendee/[schema:url = &lt;http://conferences.ted.com/TED2009/&gt;] .
+...
+      </pre>
+      </p>
+      <p>
+The Bind operation is defined by three components: <strong>Var</strong>, <strong>Value</strong> and <strong>Path</strong>, the last component being optional.
+      </p>
+      <p>
+<strong>Var</strong> contains a unique name for the new variable. Variables are prefixed by "?"; the "?" character is not part of the variable name.
+      </p>
+      <p>
+<strong>Value</strong> is the RDF Term that will be used as starting point when following the path expression.
+      </p>
+      <p>
+<strong>Path</strong> is the expression that used to identify the RDF Term to which the Variable will point. It is comprised of Steps and/or Constraints.
+      </p>
+
       <h2>Add</h2>
+      <p>
+The <strong>Add</strong> operation is used to add or append new RDF Statements to the existing graph. To add new RDF Statements, the operation requires a <strong>Subject</strong>, a <strong>Predicate</strong> and either an <strong>Object</strong> or a <strong>List</strong>.
+      <pre class='example'>
+...
+Add ?event rdf:type schema:Event .
+...
+      </pre>
+      </p>
+
       <h2>Delete</h2>
+      <p>
+The <strong>Delete</strong> operation can only be used to remove a single RDF Statement from the existing graph. The syntax for the Delete operation requires a <strong>Subject</strong>, a <strong>Predicate</strong> and an <strong>Object</strong>.
+      <pre class='example'>
+...
+Delete ?ted schema:startDate "2009-02-04".
+...
+      </pre>
+      </p>
+
       <h2>Replace</h2>
+      <p>
+The <strong>Replace</strong> operation is used to update an RDF List of one or more <strong>Objects</strong> corresponding to an RDF Statement. 
+      <pre class='example'>
+...
+Replace &lt;#&gt; profile:first_name 0> ( "Timothy" ) .
+...
+      </pre>
+      </p>
+
+
     </section>
 
 
