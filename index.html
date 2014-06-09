@@ -6,6 +6,88 @@
     <script src='http://www.w3.org/Tools/respec/respec-w3c-common'
             async class='remove'></script>
     <script class='remove'>
+      var preProc = {
+        apply: function(c) {
+                  // terms definitions
+                  refs = document.querySelectorAll('tdef') ;
+                  for (var i = 0; i < refs.length; i++) {
+                      var item = refs[i];
+                      if (!item) continue ;
+                      var p = item.parentNode ;
+                      var con = item.innerHTML ;
+                      var ref = item.getAttribute('title') ;
+                      if (!ref) {
+                          ref = item.textContent ;
+                      }
+                      if (ref) {
+                          ref = ref.replace(/\n/g, '_') ;
+                          ref = ref.replace(/\s+/g, '_') ;
+                      }
+                      var sp = document.createElement( 'dfn' ) ;
+                      sp.title = ref ;
+                      sp.innerHTML = con ;
+                      p.replaceChild(sp, item) ;
+                  }
+                  // term references
+                  refs = document.querySelectorAll('tref') ;
+                  for (var i = 0; i < refs.length; i++) {
+                      var item = refs[i];
+                      if (!item) continue ;
+                      var p = item.parentNode ;
+                      var con = item.innerHTML ;
+                      var ref = item.getAttribute('title') ;
+                      if (!ref) {
+                          ref = item.textContent ;
+                      }
+                      if (ref) {
+                          ref = ref.replace(/\n/g, '_') ;
+                          ref = ref.replace(/\s+/g, '_') ;
+                      }
+
+                      var sp = document.createElement( 'a' ) ;
+                      var id = item.textContent ;
+                      sp.className = 'tref' ;
+                      sp.title = ref ;
+                      sp.innerHTML = con ;
+                      p.replaceChild(sp, item) ;
+                  }
+              }
+      };
+
+      function updateExample(doc, content) {
+        // perform transformations to make it render and prettier
+        content = content.replace(/<!--/, '');
+        content = content.replace(/-->/, '');
+        content = doc._esc(content);
+        content = content.replace(/\*\*\*\*([^*]*)\*\*\*\*/g, '<span class="hilite">$1</span>') ;
+        return content ;
+      };
+
+      function updateDTD(doc, content) {
+        // perform transformations to
+        // make it render and prettier
+        content = '<pre class="dtd">' + doc._esc(content) + '</pre>';
+        content = content.replace(/!ENTITY % ([^ \t\r\n]*)/g, '!ENTITY <span class="entity">% $1</span>');
+        content = content.replace(/!ELEMENT ([^ \t$]*)/mg, '!ELEMENT <span class="element">$1</span>');
+        return content;
+      };
+
+      function updateSchema(doc, content) {
+        // perform transformations to
+        // make it render and prettier
+        content = '<pre class="dtd">' + doc._esc(content) + '</pre>';
+        content = content.replace(/&lt;xs:element\s+name=&quot;([^&]*)&quot;/g, '&lt;xs:element name="<span class="element" id="schema_element_$1">$1</span>"') ;
+        return content;
+      };
+
+      function updateTTL(doc, content) {
+        // perform transformations to
+        // make it render and prettier
+        content = '<pre class="sh_sourceCode">' + doc._esc(content) + '</pre>';
+        content = content.replace(/@prefix/g, '<span class="sh_keyword">@prefix</span>');
+        return content;
+      };
+
       var respecConfig = {
           // specification status (e.g. WD, LCWD, WG-NOTE, etc.). If in doubt use ED.
           specStatus:           "ED",
@@ -134,7 +216,7 @@ The following is an example LD Patch document, transferred in an HTTP PATCH requ
       <pre class='example'>
 PATCH /timbl HTTP/1.1
 Host: example.org
-Content-Length: 326@@
+Content-Length: 478
 Content-Type: text/ldpatch
 If-Match: "abc123"
 
@@ -222,10 +304,18 @@ Once a prefix such as <code>@prefix foo: &lt;http://example.org/ns#&gt;</code> i
 
       <h2>Path expressions</h2>
       <p>
+LD Patch uses path expressions to offer possible routes through a graph between two graph nodes. A trivial case is a path expression of length 1, which is a triple pattern (@@Discuss). The ends of the path may be RDF terms or variables. Variables can not be used as part of the path itself, only as ends.
+      </p>
+      <p>
+Path expressions allow for more concise graph patterns while also adding the ability to match connectivity of two resources by an arbitrary length path. Although similar to SPARQL's <a href="http://www.w3.org/TR/sparql11-query/#propertypaths" target="_blank">property paths</a>, path expressions are comprised of <tref>Steps</tref> and/or <tref>Constraints</tref>.
+      <pre class='example'>
+/schema:attendee/[schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]
+      </pre>
       </p>
 
       <h2>Node matching semantics</h2>
       <p>
+
       </p>
 
       <h2>Pointed Graph</h2>
@@ -276,7 +366,7 @@ Delete ?ted schema:startDate "2009-02-04".
 
       <h2>Replace</h2>
       <p>
-The <strong>Replace</strong> operation is used to update an RDF List of one or more <strong>Objects</strong> corresponding to an RDF Statement. 
+The <strong>Replace</strong> operation is used to update one or more <strong>Objects</strong> in an RDF Statement by providing an RDF List of one or more <strong>Objects</strong>. 
       <pre class='example'>
 ...
 Replace &lt;#&gt; profile:first_name 0> ( "Timothy" ) .
