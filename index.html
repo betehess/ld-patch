@@ -159,6 +159,7 @@
           // Team Contact.
           wgPatentURI:  "http://www.w3.org/Consortium/Patent-Policy-20040205/",
           // !!!! IMPORTANT !!!! MAKE THE ABOVE BLINK IN YOUR HEAD
+          preProcess: [ preProc ]
       };
     </script>
   </head>
@@ -188,7 +189,7 @@ This document defines the Linked Data Patch Format (LD Patch), a patch format fo
 An instance of the LD Patch language (or LD Patch document) defines a list of operations to be performed against an RDF Graph. Operations include @@@. They operate on nodes and triples belonging to the graph.
       </p>
       <p>
-        The following RDF Graph will be used as an example through this specification. It describes the relation between a person named Tim Berners-Lee (denoted by &lt;http://example.org/timbl#&gt;) and two events he attended.
+        The following RDF Graph will be used as an example through this specification. It describes the relation between a person named Tim Berners-Lee (denoted by <code>&lt;http://example.org/timbl#&gt;</code>) and two events he attended.
       </p>
       <pre class='example'>
 @prefix schema: &lt;http://schema.org/&gt; .
@@ -295,7 +296,7 @@ A LD Patch document is made of a list of statements, where the order is relevant
 
       </p>
       <section>
-        <h2>Prefixes</h2>
+        <h2><tdef>Prefixes</tdef></h2>
         <p>
 LD Patch offers the possibility to abbreviate URIs by using Turtle's <i>@prefix</i> directive that allows declaring a short prefix name for a long prefix of repeated URIs. This is useful for many RDF vocabularies that are all defined in nearby namespace URIs, possibly using XML's namespace mechanism that works in a similar fashion.
         </p>
@@ -304,12 +305,12 @@ Once a prefix such as <code>@prefix foo: &lt;http://example.org/ns#&gt;</code> i
         </p>
       </section>
       <section>
-        <h2>Path expressions</h2>
+        <h2><tdef>Path expressions</tdef></h2>
         <p>
 LD Patch uses path expressions to offer possible routes through a graph between two graph nodes. A trivial case is a path expression of length 1, which is a triple pattern (@@Discuss). The ends of the path may be RDF terms or variables. Variables can not be used as part of the path itself, only as ends.
         </p>
         <p>
-Path expressions allow for more concise graph patterns while also adding the ability to match connectivity of two resources by an arbitrary length path. Although similar to SPARQL's <a href="http://www.w3.org/TR/sparql11-query/#propertypaths" target="_blank">property paths</a>, path expressions are comprised of <tref>Steps</tref> and/or <tref>Constraints</tref>.
+Path expressions allow for more concise graph patterns while also adding the ability to match connectivity of two resources by an arbitrary length path. Although similar to SPARQL's <a href="http://www.w3.org/TR/sparql11-query/#propertypaths" target="_blank">property paths</a>, path expressions are comprised of <tref>Step</tref>s and/or <tref>Constraint</tref>s.
         <pre class='example'>
 /schema:attendee/[schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]
         </pre>
@@ -317,22 +318,22 @@ Path expressions allow for more concise graph patterns while also adding the abi
       </section>
 
       <section>
-        <h2>Node matching semantics</h2>
+        <h2><tdef>Node matching semantics</tdef></h2>
         <p>
 
         </p>
       </section>
 
       <section>
-        <h2>Pointed Graph</h2>
+        <h2><tdef>Pointed Graph</tdef></h2>
         <p>
-Contrary to <a href="http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#dfn-named-graph" target="_blank">named graphs</a> that are used to refer to documents by  syntactically pairing a URL with a graph, a pointed graph is an RDF graph with a pointer that denotes a "thing" described within the graph. It allows to traverse graphs of relations starting from a graph entity. An example of a pointed graph is the person to which the URI <code>http://example.org/timbl#</code> refers, and described by the triples contained in that graph.</p>
+Contrary to <a href="http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#dfn-named-graph" target="_blank">RDF named graphs</a> that are used to refer to documents by  syntactically pairing a URL with a graph, a pointed graph is an RDF graph with a pointer that denotes a "thing" described within the graph. It allows to traverse graphs of relations starting from a graph entity. An example of a pointed graph is the person to which the URI <code>http://example.org/timbl#</code> refers, and described by the triples contained in that graph.</p>
       </section>
 
       <section>
-        <h2>Bind</h2>
+        <h2><tdef>Bind</tdef></h2>
         <p>
-The <strong>Bind</strong> operation is used to create a new variable by binding or assigning an RDF Term to the variable. The bind variable has a global scope. Use of a given variable name anywhere in a query identifies the same variable. Following the example above, the Bind operation creates a new variable called <code>event</code>, starting from the RDF Term <code>&lt;#&gt;</code> and following the path expression <code>/schema:attendee/[schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]</code> in order to identify the RDF Term to which this varible will point -- i.e. <code>_:b2</code>.
+The Bind operation is used to create a new variable by binding or assigning an RDF Term to the variable. The bind variable has a global scope. Use of a given variable name anywhere in a query identifies the same variable. Following the example above, the Bind operation creates a new variable called <code>event</code>, starting from the RDF Term <code>&lt;#&gt;</code> and following the path expression <code>/schema:attendee/[schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]</code> in order to identify the RDF Term to which this varible will point -- i.e. <code>_:b2</code>.
         <pre class='example'>
 ...
 Bind ?event &lt;#&gt; /schema:attendee/[schema:url = &lt;http://conferences.ted.com/TED2009/&gt;] .
@@ -340,23 +341,23 @@ Bind ?event &lt;#&gt; /schema:attendee/[schema:url = &lt;http://conferences.ted.
         </pre>
         </p>
         <p>
-The Bind operation is defined by three components: <strong>Var</strong>, <strong>Value</strong> and <strong>Path</strong>, the last component being optional.
+The Bind operation is defined by three components: <tref>Var</tref>, <tref>Value</tref> and <tref>Path</tref>, the last component being optional.
         </p>
         <p>
-<strong>Var</strong> contains a unique name for the new variable. Variables are prefixed by "?"; the "?" character is not part of the variable name.
+<tref>Var</tref> contains a unique name for the new variable. Variables are prefixed by "?"; the "?" character is not part of the variable name.
         </p>
         <p>
-<strong>Value</strong> is the RDF Term that will be used as starting point when following the path expression.
+<tref>Value</tref> is the RDF Term that will be used as starting point when following the path expression.
         </p>
         <p>
-<strong>Path</strong> is the expression that used to identify the RDF Term to which the Variable will point. It is comprised of Steps and/or Constraints.
+<tref>Path</tref> is the expression that used to identify the RDF Term to which the Variable will point. It is comprised of <tref>Step</tref>s and/or <tref>Constraint</tref>s.
         </p>
       </section>
 
       <section>
-        <h2>Add</h2>
+        <h2><tdef>Add</tdef></h2>
         <p>
-The <strong>Add</strong> operation is used to add or append new RDF Statements to the existing graph. To add new RDF Statements, the operation requires a <strong>Subject</strong>, a <strong>Predicate</strong> and either an <strong>Object</strong> or a <strong>List</strong>.
+The Add operation is used to add or append new RDF Statements to the existing graph. To add new RDF Statements, the operation requires a <tref>Subject</tref>, a <tref>Predicate</tref> and either an <tref>Object</tref> or a <tref>List</tref>.
         <pre class='example'>
 ...
 Add ?event rdf:type schema:Event .
@@ -366,9 +367,9 @@ Add ?event rdf:type schema:Event .
       </section>
 
       <section>
-        <h2>Delete</h2>
+        <h2><tdef>Delete</tdef></h2>
         <p>
-The <strong>Delete</strong> operation can only be used to remove a single RDF Statement from the existing graph. The syntax for the Delete operation requires a <strong>Subject</strong>, a <strong>Predicate</strong> and an <strong>Object</strong>.
+The Delete operation can only be used to remove a single RDF Statement from the existing graph. The syntax for the Delete operation requires a <tref>Subject</tref>, a <tref>Predicate</tref> and an <tref>Object</tref>.
         <pre class='example'>
 ...
 Delete ?ted schema:startDate "2009-02-04".
@@ -378,9 +379,9 @@ Delete ?ted schema:startDate "2009-02-04".
       </section>
 
       <section>
-        <h2>Replace</h2>
+        <h2><tdef>Replace</tdef></h2>
         <p>
-The <strong>Replace</strong> operation is used to update one or more <strong>Objects</strong> in an RDF Statement by providing an RDF List of one or more <strong>Objects</strong>. 
+The Replace operation is used to update one or more <tref>Object</tref>s in an RDF Statement by providing an RDF <tref>List</tref> of one or more <tref>Object</tref>s. 
         <pre class='example'>
 ...
 Replace &lt;#&gt; profile:first_name 0> ( "Timothy" ) .
@@ -397,70 +398,70 @@ Replace &lt;#&gt; profile:first_name 0> ( "Timothy" ) .
       <p>
       </p>
       <pre>
-LDPatch ::= Prologue Statement*
-Prologue ::= Prefix*
-Prefix ::= "Prefix" PNAME_NS IRIREF
-Statement ::= Bind | Add | Delete | Replace
-Bind ::= "Bind" Var Value Path?
-Add ::= "Add" Subject Predicate ( Object | List )
-Delete ::= "Delete" Subject Predicate Object
-Replace ::= "Replace" Subject Predicate Slice List
+<tdef>LDPatch</tdef> ::= Prologue Statement*
+<tdef>Prologue</tdef> ::= <tref>Prefix</tref>*
+<tdef>Prefix</tdef> ::= "Prefix" PNAME_NS IRIREF
+<tdef>Statement</tdef> ::= <tref>Bind</tref> | <tref>Add</tref> | <tref>Delete</tref> | <tref>Replace</tref>
+<tref>Bind</tref> ::= "Bind" <tref>Var</tref> <tref>Value</tref> <tref>Path</tref>?
+<tref>Add</tref> ::= "Add" <tref>Subject</tref> <tref>Predicate</tref> ( <tref>Object</tref> | <tref>List</tref> )
+<tref>Delete</tref> ::= "Delete" <tref>Subject</tref> <tref>Predicate</tref> <tref>Object</tref>
+<tref>Replace</tref> ::= "Replace" <tref>Subject</tref> <tref>Predicate</tref> <tref>Slice</tref> <tref>List</tref>
 
-Subject ::= iri | BlankNode | Var
-Predicate ::= iri
-Object ::= iri | BlankNode | literal | Var
-Value ::= iri | literal | Var
-List ::= '(' Object* ')'
+<tdef>Subject</tdef> ::= <tref>iri</tref> | <tref>BlankNode</tref> | <tref>Var</tref>
+<tdef>Predicate</tdef> ::= <tref>iri</tref>
+<tdef>Object</tdef> ::= <tref>iri</tref> | <tref>BlankNode</tref> | <tref>literal</tref> | <tref>Var</tref>
+<tdef>Value</tdef> ::= <tref>iri</tref> | <tref>literal</tref> | <tref>Var</tref>
+<tdef>List</tdef> ::= '(' <tref>Object</tref>* ')'
 
-Path ::= ( Step | Constraint )*
-Step ::= '/' ( '-' iri | iri | INDEX )
-Constraint ::= '[' Path ( '=' Value )? ']' | '!'
+<tref>Path</tref> ::= ( <tref>Step</tref> | <tref>Constraint</tref> )*
+<tdef>Step</tdef> ::= '/' ( '-' <tref>iri</tref> | <tref>iri</tref> | <tref>INDEX</tref> )
+<tdef>Constraint</tdef> ::= '[' <tref>Path</tref> ( '=' <tref>Value</tref> )? ']' | '!'
 
-Slice ::= INDEX? '&gt;' INDEX?
-INDEX ::= [0-9]+
+<tdef>Slice</tdef> ::= <tref>INDEX</tref>? '&gt;' <tref>INDEX</tref>?
+<tdef>INDEX</tdef> ::= [0-9]+
 
 // copied from SPARQL
 
 // supposed to be `Var ::= VAR1 | VAR2` but here only VAR1
-Var ::= '?' VARNAME
-VARNAME ::= ( PN_CHARS_U | [0-9] ) ( PN_CHARS_U | [0-9] | #x00B7 | [#x0300-#x036F] | [#x203F-#x2040] )*
+<tref>Var</tref> ::= '?' <tref>VARNAME</tref>
+<tdef>VARNAME</tdef> ::= ( <tref>PN_CHARS_U</tref> | [0-9] ) ( <tref>PN_CHARS_U</tref> | [0-9] | #x00B7 | [#x0300-#x036F] | [#x203F-#x2040] )*
 
 // copied from Turtle
 
-literal ::= RDFLiteral | NumericLiteral | BooleanLiteral
-NumericLiteral ::= INTEGER | DECIMAL | DOUBLE
-RDFLiteral ::= String (LANGTAG | '^^' iri)?
-BooleanLiteral ::= 'true' | 'false'
-String ::= STRING_LITERAL_QUOTE | STRING_LITERAL_SINGLE_QUOTE | STRING_LITERAL_LONG_SINGLE_QUOTE | STRING_LITERAL_LONG_QUOTE
-iri ::= IRIREF | PrefixedName
-PrefixedName ::= PNAME_LN | PNAME_NS
-BlankNode ::= BLANK_NODE_LABEL | ANON
-IRIREF ::= '&lt;' ([^#x00-#x20&lt;&gt;"{}|^`\] | UCHAR)* '&gt;' /* #x00=NULL #01-#x1F=control codes #x20=space */
-PNAME_NS ::= PN_PREFIX? ':'
-PNAME_LN ::= PNAME_NS PN_LOCAL
-BLANK_NODE_LABEL ::= '_:' (PN_CHARS_U | [0-9]) ((PN_CHARS | '.')* PN_CHARS)?
-LANGTAG ::= '@' [a-zA-Z]+ ('-' [a-zA-Z0-9]+)*
-INTEGER ::= [+-]? [0-9]+
-DECIMAL ::= [+-]? [0-9]* '.' [0-9]+
-DOUBLE ::= [+-]? ([0-9]+ '.' [0-9]* EXPONENT | '.' [0-9]+ EXPONENT | [0-9]+ EXPONENT)
-EXPONENT ::= [eE] [+-]? [0-9]+
-STRING_LITERAL_QUOTE ::= '"' ([^#x22#x5C#xA#xD] | ECHAR | UCHAR)* '"'      /* #x22=" #x5C=\ #xA=new line #xD=carriage return */
-STRING_LITERAL_SINGLE_QUOTE ::= "'" ([^#x27#x5C#xA#xD] | ECHAR | UCHAR)* "'"      /* #x27=' #x5C=\ #xA=new line #xD=carriage return */
-STRING_LITERAL_LONG_SINGLE_QUOTE ::= "'''" (("'" | "''")? ([^'\] | ECHAR | UCHAR))* "'''"
-STRING_LITERAL_LONG_QUOTE ::= '"""' (('"' | '""')? ([^"\] | ECHAR | UCHAR))* '"""'
-UCHAR ::= '\\u' HEX HEX HEX HEX | '\\U' HEX HEX HEX HEX HEX HEX HEX HEX
-ECHAR ::= '\' [tbnrf"'\]
-WS ::= #x20 | #x9 | #xD | #xA /* #x20=space #x9=character tabulation #xD=carriage return #xA=new line */
-ANON ::= '[' WS* ']'
-PN_CHARS_BASE ::= [A-Z] | [a-z] | [#x00C0-#x00D6] | [#x00D8-#x00F6] | [#x00F8-#x02FF] | [#x0370-#x037D] | [#x037F-#x1FFF] | [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF]
-PN_CHARS_U ::= PN_CHARS_BASE | '_'
-PN_CHARS ::= PN_CHARS_U | '-' | [0-9] | #x00B7 | [#x0300-#x036F] | [#x203F-#x2040]
-PN_PREFIX ::= PN_CHARS_BASE ((PN_CHARS | '.')* PN_CHARS)?
-PN_LOCAL ::= (PN_CHARS_U | ':' | [0-9] | PLX) ((PN_CHARS | '.' | ':' | PLX)* (PN_CHARS | ':' | PLX))?
-PLX ::= PERCENT | PN_LOCAL_ESC
-PERCENT ::= '%' HEX HEX
-HEX ::= [0-9] | [A-F] | [a-f]
-PN_LOCAL_ESC ::= '\' ('_' | '~' | '.' | '-' | '!' | '$' | '&amp;' | "'" | '(' | ')' | '*' | '+' | ',' | ';' | '=' | '/' | '?' | '#' | '@' | '%')
+<tref>Literal</tref> ::= <tref>RDFLiteral</tref> | <tref>NumericLiteral</tref> | <tref>BooleanLiteral</tref>
+<tdef>NumericLiteral</tdef> ::= <tref>INTEGER</tref> | <tref>DECIMAL</tref> | <tref>DOUBLE</tref>
+<tdef>RDFLiteral</tdef> ::= <tref>String</tref> (<tref>LANGTAG</tref> | '^^' <tref>iri</tref>)?
+<tdef>BooleanLiteral</tdef> ::= 'true' | 'false'
+<tref>String</tref> ::= <tref>STRING_LITERAL_QUOTE</tref> | <tref>STRING_LITERAL_SINGLE_QUOTE</tref> | <tref>STRING_LITERAL_LONG_SINGLE_QUOTE</tref> | <tref>STRING_LITERAL_LONG_QUOTE</tref>
+<tref>iri</tref> ::= <tref>IRIREF</tref> | <tref>PrefixedName</tref>
+<tdef>PrefixedName</tdef> ::= <tref>PNAME_LN</tref> | <tref>PNAME_NS</tref>
+<tref>BlankNode</tref> ::= <tref>BLANK_NODE_LABEL</tref> | <tref>ANON</tref>
+<tdef>IRIREF</tdef> ::= '&lt;' ([^#x00-#x20&lt;&gt;"{}|^`\] | <tref>UCHAR</tref>)* '&gt;' /* #x00=NULL #01-#x1F=control codes #x20=space */
+<tdef>PNAME_NS</tdef> ::= <tref>PN_PREFIX</tref>? ':'
+<tdef>PNAME_LN</tdef> ::= <tref>PNAME_NS</tref> <tref>PN_LOCAL</tref>
+<tdef>BLANK_NODE_LABEL</tdef> ::= '_:' (<tref>PN_CHARS_U</tref> | [0-9]) ((<tref>PN_CHARS</tref> | '.')* <tref>PN_CHARS</tref>)?
+<tdef>LANGTAG</tdef> ::= '@' [a-zA-Z]+ ('-' [a-zA-Z0-9]+)*
+<tdef>INTEGER</tdef> ::= [+-]? [0-9]+
+<tdef>DECIMAL</tdef> ::= [+-]? [0-9]* '.' [0-9]+
+<tdef>DOUBLE</tdef> ::= [+-]? ([0-9]+ '.' [0-9]* <tref>EXPONENT</tref> | '.' [0-9]+ <tref>EXPONENT</tref> | [0-9]+ <tref>EXPONENT</tref>)
+<tdef>EXPONENT</tdef> ::= [eE] [+-]? [0-9]+
+<tdef>STRING_LITERAL_QUOTE</tdef> ::= '"' ([^#x22#x5C#xA#xD] | <tref>ECHAR</tref> | <tref>UCHAR</tref>)* '"'      /* #x22=" #x5C=\ #xA=new line #xD=carriage return */
+<tdef>STRING_LITERAL_SINGLE_QUOTE</tdef> ::= "'" ([^#x27#x5C#xA#xD] | <tref>ECHAR</tref> | <tref>UCHAR</tref>)* "'"      /* #x27=' #x5C=\ #xA=new line #xD=carriage return */
+<tdef>STRING_LITERAL_LONG_SINGLE_QUOTE</tdef> ::= "'''" (("'" | "''")? ([^'\] | <tref>ECHAR</tref> | <tref>UCHAR</tref>))* "'''"
+<tdef>STRING_LITERAL_LONG_QUOTE</tdef> ::= '"""' (('"' | '""')? ([^"\] | <tref>ECHAR</tref> | <tref>UCHAR</tref>))* '"""'
+<tdef>UCHAR</tdef> ::= '\\u' <tref>HEX</tref> <tref>HEX</tref> <tref>HEX</tref> <tref>HEX</tref> | '\\U' <tref>HEX</tref> <tref>HEX</tref> <tref>HEX</tref> <tref>HEX</tref> <tref>HEX</tref> <tref>HEX</tref> <tref>HEX</tref> <tref>HEX</tref>
+<tdef>ECHAR</tdef> ::= '\' [tbnrf"'\]
+<tdef>WS</tdef> ::= #x20 | #x9 | #xD | #xA /* #x20=space #x9=character tabulation #xD=carriage return #xA=new line */
+<tdef>ANON</tdef> ::= '[' <tref>WS</tref>* ']'
+<tdef>PN_CHARS_BASE</tdef> ::= [A-Z] | [a-z] | [#x00C0-#x00D6] | [#x00D8-#x00F6] | [#x00F8-#x02FF] | [#x0370-#x037D] | [#x037F-#x1FFF] | [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF]
+<tdef>PN_CHARS_U</tdef> ::= <tref>PN_CHARS_BASE</tref> | '_'
+<tdef>PN_CHARS</tdef> ::= <tref>PN_CHARS_U</tref> | '-' | [0-9] | #x00B7 | [#x0300-#x036F] | [#x203F-#x2040]
+<tdef>PN_PREFIX</tdef> ::= <tref>PN_CHARS_BASE</tref> ((<tref>PN_CHARS</tref> | '.')* <tref>PN_CHARS</tref>)?
+<tdef>PN_LOCAL</tdef> ::= (<tref>PN_CHARS_U</tref> | ':' | [0-9] | <tref>PLX</tref>) ((<tref>PN_CHARS</tref> | '.' | ':' | <tref>PLX</tref>)* (<tref>PN_CHARS</tref> | ':' | <tref>PLX</tref>))?
+<tdef>PLX</tdef> ::= <tref>PERCENT</tref> | <tref>PN_LOCAL_ESC</tref>
+<tdef>PERCENT</tdef> ::= '%' <tref>HEX</tref> <tref>HEX</tref>
+<tdef>HEX</tdef> ::= [0-9] | [A-F] | [a-f]
+<tdef>PN_LOCAL_ESC</tdef> ::= '\' ('_' | '~' | '.' | '-' | '!' | '$' | '&amp;' | "'" | '(' | ')' | '*' | '+' | ',' | ';' | '=' | '/' | '?' | '#' | '@' | '%')
       </pre>
     </section>
 
@@ -470,39 +471,39 @@ PN_LOCAL_ESC ::= '\' ('_' | '~' | '.' | '-' | '!' | '$' | '&amp;' | "'" | '(' | 
 The LD Patch data model makes use of the commonly defined <a href="http://en.wikipedia.org/wiki/Abstract_data_type">Abstract Data Types</a> <a href="http://en.wikipedia.org/wiki/Set_(computer_science)">Set</a>, <a href="http://en.wikipedia.org/wiki/List_(computer_science)">List</a> and <a href="http://en.wikipedia.org/wiki/Option_type">Option</a>, used here as type constructors. For example, <code>Set(A)</code> denotes the type for the sets of elements of type <code>A</code>. We assume that they come with their common operations, such as the function <code>size&nbsp;:&nbsp;Set&nbsp;→&nbsp;Int</code>.					
       </p>
       <pre>
-LDPatch ::= List(Statement)
+<tref>LDPatch</tref> ::= <tref>List</tref>(<tref>Statement</tref>)
 
-Statement ::= Add | AddList | Delete | Bind | Replace
-Add       ::= (Subject, Predicate, Object)
-AddList   ::= (Subject, Predicate, List(Object))
-Delete    ::= (Subject, Predicate, Object)
-Bind      ::= (Var, Value, Path)
-Replace   ::= (Subject, Predicate, Slice, List(Object))
+<tref>Statement</tref> ::= <tref>Add</tref> | <tref>AddList</tref> | <tref>Delete</tref> | <tref>Bind</tref> | <tref>Replace</tref>
+<tref>Add</tref>       ::= (<tref>Subject</tref>, <tref>Predicate</tref>, <tref>Object</tref>)
+<tdef>AddList</tdef>   ::= (<tref>Subject</tref>, <tref>Predicate</tref>, <tref>List</tref>(<tref>Object</tref>))
+<tref>Delete</tref>    ::= (<tref>Subject</tref>, <tref>Predicate</tref>, <tref>Object</tref>)
+<tref>Bind</tref>      ::= (<tref>Var</tref>, <tref>Value</tref>, <tref>Path</tref>)
+<tref>Replace</tref>   ::= (<tref>Subject</tref>, <tref>Predicate</tref>, <tref>Slice</tref>, <tref>List</tref>(<tref>Object</tref>))
 
-Path         ::= List(PathElement)
-PathElement  ::= Step | Constraint
-Step         ::= StepForward | StepBackward | StepAt
-Constraint   ::= Filter | UNICITY_CONSTRAINT
-StepForward  ::= IRI
-StepBackward ::= IRI
-StepAt       ::= Integer
-Filter       ::= (Path, Option(Value))
+<tdef>Path</tdef>         ::= <tref>List</tref>(<tref>PathElement</tref>)
+<tdef>PathElement</tdef>  ::= <tref>Step</tref> | <tref>Constraint</tref>
+<tref>Step</tref>         ::= <tref>StepForward</tref> | <tref>StepBackward</tref> | <tref>StepAt</tref>
+<tref>Constraint</tref>   ::= <tref>Filter</tref> | UNICITY_CONSTRAINT
+<tdef>StepForward</tdef>  ::= <tref>IRI</tref>
+<tdef>StepBackward</tdef> ::= <tref>IRI</tref>
+<tdef>StepAt</tdef>       ::= <tref>Integer</tref>
+<tdef>Filter</tdef>       ::= (<tref>Path</tref>, Option(<tref>Value</tref>))
 
-Slice            ::= Range | EverythingBefore | EverythingAfter | END
-Range            ::= (Integer, Integer)
-EverythingBefore ::= Integer
-EverythingAfter  ::= Integer
+<tref>Slice</tref>            ::= <tref>Range</tref> | <tref>EverythingBefore</tref> | <tref>EverythingAfter</tref> | END
+<tdef>Range</tdef>            ::= (<tref>Integer</tref>, <tref>Integer</tref>)
+<tdef>EverythingBefore</tdef> ::= <tref>Integer</tref>
+<tdef>EverythingAfter</tdef>  ::= <tref>Integer</tref>
 
-Subject   ::= IRI | BlankNode | Var
-Predicate ::= IRI
-Object    ::= IRI | BlankNode | Literal | Var
-Value     ::= IRI | Literal | Var
+<tref>Subject</tref>   ::= <tref>IRI</tref> | <tref>BlankNode</tref> | <tref>Var</tref>
+<tref>Predicate</tref> ::= <tref>IRI</tref>
+<tref>Object</tref>    ::= <tref>IRI</tref> | <tref>BlankNode</tref> | <tref>Literal</tref> | <tref>Var</tref>
+<tref>Value</tref>     ::= <tref>IRI</tref> | <tref>Literal</tref> | <tref>Var</tref>
 
-Var       ::= String
-IRI       ::= RDF URI-reference http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#section-IRIs as subsequently restricted by SPARQL http://www.w3.org/TR/rdf-sparql-query/#docTerminology
-BlankNode ::= RDF blank node http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#section-blank-nodes
-Literal   ::= RDF Literal http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#section-Graph-Literal
-String    ::= a Unicode String
+<tdef>Var</tdef>       ::= <tref>String</tref>
+<tdef>IRI</tdef>       ::= RDF URI-reference http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#section-IRIs as subsequently restricted by SPARQL http://www.w3.org/TR/rdf-sparql-query/#docTerminology
+<tdef>BlankNode</tdef> ::= RDF blank node http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#section-blank-nodes
+<tdef>Literal</tdef>   ::= RDF Literal http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#section-Graph-Literal
+<tdef>String</tdef>    ::= a Unicode String
       </pre>
 
     </section>
