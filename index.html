@@ -229,7 +229,7 @@ If-Match: "abc123"
 Delete &lt;#&gt; profile:first_name "Tim" .
 Add    &lt;#&gt; profile:first_name "Timothy" .
 
-Replace &lt;#&gt; ex:preferredLanguages 1>2 ( "fr-CH" ) .
+UpdateList &lt;#&gt; ex:preferredLanguages 1>2 ( "fr-CH" ) .
 
 Bind ?event &lt;#&gt; /schema:attendee/[schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]  .
 Add ?event rdf:type schema:Event .
@@ -382,12 +382,12 @@ Delete ?ted schema:startDate "2009-02-04".
       </section>
 
       <section>
-        <h2><tdef>Replace</tdef></h2>
+        <h2><tdef>UpdateList</tdef></h2>
         <p>
-The Replace operation is used to update one or more <tref>Object</tref>(s) in an RDF Statement by providing an RDF <tref>List</tref> of one or more <tref>Object</tref>(s). 
+The UpdateList operation is used to update one or more <tref>Object</tref>(s) in an RDF Statement by providing an RDF <tref>List</tref> of one or more <tref>Object</tref>(s). 
         <pre class='example'>
 ...
-Replace &lt;#&gt; profile:first_name 0> ( "Timothy" ) .
+UpdateList &lt;#&gt; ex:preferredLanguages 1>2 ( "fr-CH" ) .
 ...
         </pre>
         </p>
@@ -404,11 +404,11 @@ Replace &lt;#&gt; profile:first_name 0> ( "Timothy" ) .
 <tdef>LDPatch</tdef> ::= Prologue Statement*
 <tdef>Prologue</tdef> ::= <tref>Prefix</tref>*
 <tdef>Prefix</tdef> ::= "Prefix" PNAME_NS IRIREF
-<tdef>Statement</tdef> ::= <tref>Bind</tref> | <tref>Add</tref> | <tref>Delete</tref> | <tref>Replace</tref>
+<tdef>Statement</tdef> ::= <tref>Bind</tref> | <tref>Add</tref> | <tref>Delete</tref> | <tref>UpdateList</tref>
 <tref>Bind</tref> ::= "Bind" <tref>Var</tref> <tref>Value</tref> <tref>Path</tref>?
 <tref>Add</tref> ::= "Add" <tref>Subject</tref> <tref>Predicate</tref> ( <tref>Object</tref> | <tref>List</tref> )
 <tref>Delete</tref> ::= "Delete" <tref>Subject</tref> <tref>Predicate</tref> <tref>Object</tref>
-<tref>Replace</tref> ::= "Replace" <tref>Subject</tref> <tref>Predicate</tref> <tref>Slice</tref> <tref>List</tref>
+<tref>UpdateList</tref> ::= "UpdateList" <tref>Subject</tref> <tref>Predicate</tref> <tref>Slice</tref> <tref>List</tref>
 
 <tdef>Subject</tdef> ::= <tref>iri</tref> | <tref>BlankNode</tref> | <tref>Var</tref>
 <tdef>Predicate</tdef> ::= <tref>iri</tref>
@@ -476,12 +476,12 @@ The LD Patch data model makes use of the commonly defined <a href="http://en.wik
       <pre>
 <tref>LDPatch</tref> ::= <tref>List</tref>(<tref>Statement</tref>)
 
-<tref>Statement</tref> ::= <tref>Add</tref> | <tref>AddList</tref> | <tref>Delete</tref> | <tref>Bind</tref> | <tref>Replace</tref>
+<tref>Statement</tref> ::= <tref>Add</tref> | <tref>AddList</tref> | <tref>Delete</tref> | <tref>Bind</tref> | <tref>UpdateList</tref>
 <tref>Add</tref>       ::= (<tref>Subject</tref>, <tref>Predicate</tref>, <tref>Object</tref>)
 <tdef>AddList</tdef>   ::= (<tref>Subject</tref>, <tref>Predicate</tref>, <tref>List</tref>(<tref>Object</tref>))
 <tref>Delete</tref>    ::= (<tref>Subject</tref>, <tref>Predicate</tref>, <tref>Object</tref>)
 <tref>Bind</tref>      ::= (<tref>Var</tref>, <tref>Value</tref>, <tref>Path</tref>)
-<tref>Replace</tref>   ::= (<tref>Subject</tref>, <tref>Predicate</tref>, <tref>Slice</tref>, <tref>List</tref>(<tref>Object</tref>))
+<tref>UpdateList</tref>   ::= (<tref>Subject</tref>, <tref>Predicate</tref>, <tref>Slice</tref>, <tref>List</tref>(<tref>Object</tref>))
 
 <tdef>Path</tdef>         ::= <tref>List</tref>(<tref>PathElement</tref>)
 <tdef>PathElement</tdef>  ::= <tref>Step</tref> | <tref>Constraint</tref>
