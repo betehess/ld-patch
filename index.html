@@ -389,12 +389,18 @@ Delete ?ted schema:startDate "2009-02-04".
       <section>
         <h2><tdef>UpdateList</tdef></h2>
         <p>
-The UpdateList operation is used to update one or more <tref>Object</tref>(s) in an RDF Statement by providing an RDF <tref>List</tref> of one or more <tref>Object</tref>(s). 
+The UpdateList operation is used to update the members of an RDF collection (@@@ref). That collection is supposed to be the object of a triple, specified by its <tref>Subject</tref> and <tref>Predicate</tref>. A <tref>Slice</tref> specification then describes which members (if any) of the collections are affected by the operation, and then a <tref>List</tref> of new members is provided. In the example above, UpdateList is used to replace the second member of a collection by the literal "fr-CH".
         <pre class='example'>
 ...
 UpdateList &lt;#&gt; ex:preferredLanguages 1>2 ( "fr-CH" ) .
 ...
         </pre>
+        </p>
+        <p>
+UpdateList works in a similar way to <a href="https://docs.python.org/3/reference/expressions.html#slicings">slicing in Python</a> or similar languages. In general, it replaces a part (“slice”) of a list by another list. To remove members, one can replace them by an empty list. To insert new values between two members, one can set a non empty list to the empty slice comprised between those two members.
+        </p>
+        <p>
+In LD-Patch, a slice is described by two positive integers separated by ">". The second integer can be omitted, in that case it denotes the end of the list. If both integers are omitted (i.e. ">" alone), this denotes by convention the empty slice at the end of the list. @@@TODO eplain that indexes start at 0  @@@TODO give some examples here.
         </p>
       </section>
 
