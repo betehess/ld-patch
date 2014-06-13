@@ -310,17 +310,17 @@ A LD Patch document is made of a prologue and a list of statements, where the or
 LD Patch offers the possibility to abbreviate URIs by using Turtle's <i>@prefix</i> directive that allows declaring a short prefix name for a long prefix of repeated URIs. This is useful for many RDF vocabularies that are all defined in nearby namespace URIs, possibly using XML's namespace mechanism that works in a similar fashion.
         </p>
         <p>
-Once a prefix such as <code>@prefix foo: &lt;http://example.org/ns#&gt;</code> is defined, any mention of a URI later in the document may use a <tref>PrefixedName</tref> that starts <code>foo:</code> to stand for the longer URI. So for example, the <tref>PrefixedName</tref> <code>foo:bar</code> is a shorthand for the URI <code>&lt;http://example.org/ns#bar&gt;</code>.
+Once a prefix such as <code>@prefix foo: &lt;http://example.org/ns#&gt;</code> is defined, any mention of a URI later in the document may use a <tref>PrefixedName</tref> that starts with <code>foo:</code> to stand for the longer URI. So for example, the <tref>PrefixedName</tref> <code>foo:bar</code> is a shorthand for the URI <code>&lt;http://example.org/ns#bar&gt;</code>.
         </p>
       </section>
 
       <section>
         <h2><tdef>Node matching semantics</tdef></h2>
         <p>
-LD Patch borrows much of its syntax to Turtle (@@@ref) and SPARQL (@@@ref) for describing nodes. IRIs (either abbreviated or not) and literals represent the corresponding node in the graph being patched. Bland nodes, on the other hand, pose a problem, as they have no global identifier. Indeed, blank node identifiers have their scope limited to the document in which they appear. As a consequence, whenever a blank node identifiers appears in an LD Patch document, it is understood to denote a <em>fresh</em> blank node, that needs to be created in the patched RDF graph. (@@@ remark that this is different from RDF-Patch?)
+LD Patch borrows much of its syntax to Turtle (@@@ref) and SPARQL (@@@ref) for describing nodes. IRIs (either abbreviated or not) and literals represent the corresponding node in the graph being patched. Blank nodes, on the other hand, pose a problem, as they have no global identifier. Indeed, blank node identifiers have their scope limited to the document in which they appear. As a consequence, whenever a blank node identifiers appears in an LD Patch document, it is understood to denote a <em>fresh</em> blank node, that needs to be created in the patched RDF graph. (@@@ remark that this is different from RDF-Patch)
         </p>
         <p>
-In order to be able to address blank nodes already present in the graph, LD Patch has two mechanism: <tref>Bind</tref>ing a variable to a blank node reachable with a <tref>path expression</tref>, and <tref>UpdateList</tref> to deal with those blank nodes that constitute RDF collections. There are cases where those mechanisms will not be able to unambiuously adress a given blank node, but those cases are deemed pathological, and out of the scope of this specification. (@@@give an example of pathological graph?)
+In order to be able to address blank nodes already present in the graph, LD Patch has two mechanisms: <tref>Bind</tref>ing a variable to a blank node reachable with a <tref>path expression</tref>, and <tref>UpdateList</tref> to deal with those blank nodes that constitute RDF collections. There are cases where those mechanisms will not be able to unambiuously adress a given blank node, but those cases are deemed pathological, and out of the scope of this specification. (@@@give here an example of pathological graph)
         </p>
       </section>
 
@@ -330,15 +330,15 @@ In order to be able to address blank nodes already present in the graph, LD Patc
 LD Patch uses path expressions to describe possible routes through a graph between two graph nodes. The main goal is to allow addressing a blank node by “walking” the arcs of the graph from an already identified node. A path is composed by a number of steps, which can be of three kinds:
         </p>
         <ul>
-          <li>A <tref>StepForward</tref> is defined by a URI, and consist in following outgoing arcs having that URI as their predicate.</li>
-          <li>A <tref>StepBackward</tref> is defined by a URI preceded with the minus ("-") sign, and consist in following incoming arcs having that URI as their predicate.</li>
-          <li>A <tref>StepAt</tref> is defined by an integer <i>i</i>, and consist in following <i>i</i> <code>rdf:rest</code> arcs and one <code>rdf:first</code> arc in order to reach the corresponding member of an RDF collection.</li>
+          <li>A <tref>StepForward</tref> is defined by a URI, and consists in following outgoing arcs having that URI as their predicate.</li>
+          <li>A <tref>StepBackward</tref> is defined by a URI preceded with the minus ("-") sign, and consists in following incoming arcs having that URI as their predicate.</li>
+          <li>A <tref>StepAt</tref> is defined by an integer <i>n</i>, and consists in following <i>n</i> <code>rdf:rest</code> arcs and one <code>rdf:first</code> arc in order to reach the corresponding member of an RDF collection.</li>
         </ul>
         <p>
 Note that each step can, in general, result in <em>several</em> matching nodes, as a given node can have several (incoming or outgoing) arcs with the same predicate.
         </p>
         <p>
-Path may also contains <tref>Constraint</tref>s, which are of two kinds:
+A Path may also contains <tref>Constraint</tref>s, which are of two kinds:
         </p>
         <ul>
           <li>A unicity constraint, described by the <em>bang</em> ("!") character, ensures that the result of the path so far contains exactly one node.</li>
@@ -348,7 +348,7 @@ Path may also contains <tref>Constraint</tref>s, which are of two kinds:
         <p>
 The path below (taken from our running example) will look for all the events attended by the starting node, and keep only those  having <code>&lt;http://conferences.ted.com/TED2009/&gt;</code> as their URL.
         <pre class='example'>
-/schema:attendee/[schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]
+/schema:attendee/[/schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]
         </pre>
         </p>
       </section>
@@ -356,10 +356,10 @@ The path below (taken from our running example) will look for all the events att
       <section>
         <h2><tdef>Bind</tdef></h2>
         <p>
-The Bind operation is used to create a new variable by binding or assigning an RDF Term to the variable. The bind variable has a global scope. Use of a given variable name anywhere in an LD Patch document identifies the same variable. Following the example above, the Bind operation creates a new variable called <code>event</code>, starting from the RDF Term <code>&lt;#&gt;</code> and following the path expression <code>/schema:attendee/[schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]</code> in order to identify the RDF Term to which this varible will point -- i.e. <code>_:b2</code>.
+The Bind operation is used to create a new variable by binding or assigning an RDF Term to the variable. The bound variable has a global scope. Use of a given variable name anywhere in an LD Patch document identifies the same variable (@@@ but a variable _can_ be redefined). Following the example above, the Bind operation creates a new variable called <code>event</code>, starting from the RDF Term <code>&lt;#&gt;</code> and following the path expression <code>/schema:attendee/[/schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]</code> in order to identify the RDF Term to which this variable will point -- i.e. <code>_:b2</code>.
         <pre class='example'>
 ...
-Bind ?event &lt;#&gt; /schema:attendee/[schema:url = &lt;http://conferences.ted.com/TED2009/&gt;] .
+Bind ?event &lt;#&gt; /schema:attendee/[/schema:url = &lt;http://conferences.ted.com/TED2009/&gt;] .
 ...
         </pre>
         </p>
@@ -409,7 +409,7 @@ Delete ?ted schema:startDate "2009-02-04".
       <section>
         <h2><tdef>UpdateList</tdef></h2>
         <p>
-The UpdateList operation is used to update the members of an RDF collection (@@@ref). That collection is supposed to be the object of a triple, specified by its <tref>Subject</tref> and <tref>Predicate</tref>. A <tref>Slice</tref> specification then describes which members (if any) of the collections are affected by the operation, and then a <tref>List</tref> of new members is provided. In the example above, UpdateList is used to replace the second member of a collection by the literal "fr-CH".
+The UpdateList operation is used to update the members of an RDF collection (@@@ref). That collection is supposed to be the object of a triple, specified by its <tref>Subject</tref> and <tref>Predicate</tref>. A <tref>Slice</tref> specification then describes which members (if any) of the collections are affected by the operation, and then a <tref>List</tref> of new members is provided. In the example below, UpdateList is used to replace the second member of a collection by the literal "fr-CH".
         <pre class='example'>
 ...
 UpdateList &lt;#&gt; ex:preferredLanguages 1>2 ( "fr-CH" ) .
@@ -420,7 +420,7 @@ UpdateList &lt;#&gt; ex:preferredLanguages 1>2 ( "fr-CH" ) .
 UpdateList works in a similar way to <a href="https://docs.python.org/3/reference/expressions.html#slicings">slicing in Python</a> or similar languages. In general, it replaces a part (“slice”) of a list by another list. To remove members, one can replace them by an empty list. To insert new values between two members, one can set a non empty list to the empty slice comprised between those two members.
         </p>
         <p>
-In LD-Patch, a slice is described by two positive integers separated by ">". The second integer can be omitted, in that case it denotes the end of the list. If both integers are omitted (i.e. ">" alone), this denotes by convention the empty slice at the end of the list. @@@TODO eplain that indexes start at 0  @@@TODO give some examples here.
+In LD Patch, a slice is described by two positive integers separated by ">". The second integer can be omitted, in that case it denotes the end of the list. If both integers are omitted (i.e. ">" alone), this denotes by convention the empty slice at the end of the list. @@@TODO eplain that indexes start at 0  @@@TODO give some examples here.
         </p>
       </section>
 
@@ -547,6 +547,7 @@ The LD Patch data model makes use of the commonly defined <a href="http://en.wik
       <p>
 The denotational RDF semantics makes use of the <a href="http://en.wikipedia.org/wiki/Set-builder_notation">set-builder notation</a> for building the RDF sets.
       </p>
+      <p>@@TODO@@</p>
 <!--pre>An Env(ironment) is a Map from Var-s to Node-s
 Env      ::= Map(Var, Set(Node))
 
