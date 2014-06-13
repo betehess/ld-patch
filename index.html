@@ -237,10 +237,10 @@ Add ?event rdf:type schema:Event .
 Bind ?ted &lt;http://conferences.ted.com/TED2009/&gt; /-schema:url! .
 Delete ?ted schema:startDate "2009-02-04".
 Add ?ted schema:location _:loc .
-_loc schema:name "Long Beach, California" .
-_loc schema:geo _:geo .
-_:geo schema:latitude "33.7817" .
-_:geo schema:longitude "-118.2054" ] .
+Add _loc schema:name "Long Beach, California" .
+Add _loc schema:geo _:geo .
+Add _:geo schema:latitude "33.7817" .
+Add _:geo schema:longitude "-118.2054" .
       </pre>
       <p>
 This example introduces many of features of the LD Patch format: @prefix and prefixed names, the @@@ operations, the Bind-ing mechanism, @@@.
@@ -363,6 +363,8 @@ The Bind operation is defined by three components: <tref>Var</tref>, <tref>Value
 The Add operation is used to add or append new RDF Statements to the existing graph. To add new RDF Statements, the operation requires a <tref>Subject</tref>, a <tref>Predicate</tref> and either an <tref>Object</tref> or a <tref>List</tref>.
         <pre class='example'>
 ...
+Add    &lt;#&gt; profile:first_name "Timothy" .
+...
 Add ?event rdf:type schema:Event .
 ...
         </pre>
@@ -374,6 +376,8 @@ Add ?event rdf:type schema:Event .
         <p>
 The Delete operation can only be used to remove a single RDF Statement from the existing graph. The syntax for the Delete operation requires a <tref>Subject</tref>, a <tref>Predicate</tref> and an <tref>Object</tref>.
         <pre class='example'>
+...
+Delete &lt;#&gt; profile:first_name "Tim" .
 ...
 Delete ?ted schema:startDate "2009-02-04".
 ...
