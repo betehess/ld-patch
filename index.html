@@ -433,8 +433,7 @@ In LD Patch, a slice is described by two positive integers separated by ">". The
       </p>
       <pre>
 <tdef>LDPatch</tdef> ::= Prologue Statement*
-<tdef>Prologue</tdef> ::= <tref>Prefix</tref>*
-<tdef>Prefix</tdef> ::= "@prefix" PNAME_NS IRIREF "."
+<tdef>Prologue</tdef> ::= <tref>prefixID</tref>*
 <tdef>Statement</tdef> ::= <tref>Bind</tref> | <tref>Add</tref> | <tref>Delete</tref> | <tref>UpdateList</tref>
 <tref>Bind</tref> ::= "Bind" <tref>Var</tref> <tref>Value</tref> <tref>Path</tref>? "."
 <tref>Add</tref> ::= "Add" <tref>Subject</tref> <tref>Predicate</tref> ( <tref>Object</tref> | <tref>List</tref> ) "."
@@ -462,6 +461,7 @@ In LD Patch, a slice is described by two positive integers separated by ">". The
 
 // copied from Turtle
 
+<tdef>prefixID</tdef> ::= "@prefix" PNAME_NS IRIREF "."
 <tref>Literal</tref> ::= <tref>RDFLiteral</tref> | <tref>NumericLiteral</tref> | <tref>BooleanLiteral</tref>
 <tdef>NumericLiteral</tdef> ::= <tref>INTEGER</tref> | <tref>DECIMAL</tref> | <tref>DOUBLE</tref>
 <tdef>RDFLiteral</tdef> ::= <tref>String</tref> (<tref>LANGTAG</tref> | '^^' <tref>iri</tref>)?
