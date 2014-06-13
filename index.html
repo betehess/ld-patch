@@ -313,18 +313,6 @@ LD Patch offers the possibility to abbreviate URIs by using Turtle's <i>@prefix<
 Once a prefix such as <code>@prefix foo: &lt;http://example.org/ns#&gt;</code> is defined, any mention of a URI later in the document may use a <tref>PrefixedName</tref> that starts <code>foo:</code> to stand for the longer URI. So for example, the <tref>PrefixedName</tref> <code>foo:bar</code> is a shorthand for the URI <code>&lt;http://example.org/ns#bar&gt;</code>.
         </p>
       </section>
-      <section>
-        <h2><tdef>Path expression</tdef></h2>
-        <p>
-LD Patch uses path expressions to offer possible routes through a graph between two graph nodes. A trivial case is a path expression of length 1, which is a triple pattern (@@Discuss). The ends of the path may be RDF terms or variables. Variables can not be used as part of the path itself, only as ends.
-        </p>
-        <p>
-Path expressions allow for more concise graph patterns while also adding the ability to match connectivity of two resources by an arbitrary length path. Although similar to SPARQL's <a href="http://www.w3.org/TR/sparql11-query/#propertypaths" target="_blank">property paths</a>, path expressions are comprised of <tref>Step</tref>s and/or <tref>Constraint</tref>s.
-        <pre class='example'>
-/schema:attendee/[schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]
-        </pre>
-        </p>
-      </section>
 
       <section>
         <h2><tdef>Node matching semantics</tdef></h2>
@@ -333,6 +321,35 @@ LD Patch borrows much of its syntax to Turtle (@@@ref) and SPARQL (@@@ref) for d
         </p>
         <p>
 In order to be able to address blank nodes already present in the graph, LD Patch has two mechanism: <tref>Bind</tref>ing a variable to a blank node reachable with a <tref>path expression</tref>, and <tref>UpdateList</tref> to deal with those blank nodes that constitute RDF collections. There are cases where those mechanisms will not be able to unambiuously adress a given blank node, but those cases are deemed pathological, and out of the scope of this specification. (@@@give an example of pathological graph?)
+        </p>
+      </section>
+
+      <section>
+        <h2><tdef>Path expression</tdef></h2>
+        <p>
+LD Patch uses path expressions to describe possible routes through a graph between two graph nodes. The main goal is to allow addressing a blank node by “walking” the arcs of the graph from an already identified node. A path is composed by a number of steps, which can be of three kinds:
+        </p>
+        <ul>
+          <li>A <tref>StepForward</tref> is defined by a URI, and consist in following outgoing arcs having that URI as their predicate.</li>
+          <li>A <tref>StepBackward</tref> is defined by a URI preceded with the minus ("-") sign, and consist in following incoming arcs having that URI as their predicate.</li>
+          <li>A <tref>StepAt</tref> is defined by an integer <i>i</i>, and consist in following <i>i</i> <code>rdf:rest</code> arcs and one <code>rdf:first</code> arc in order to reach the corresponding member of an RDF collection.</li>
+        </ul>
+        <p>
+Note that each step can, in general, result in <em>several</em> matching nodes, as a given node can have several (incoming or outgoing) arcs with the same predicate.
+        </p>
+        <p>
+Path may also contains <tref>Constraint</tref>s, which are of two kinds:
+        </p>
+        <ul>
+          <li>A unicity constraint, described by the <em>bang</em> ("!") character, ensures that the result of the path so far contains exactly one node.</li>
+          <li>A <tref>filter</tref>, consisting of a path in square brackets ("[", "]"), keeps only from the matching nodes so far those that “satisfy” the enclosed path, i.e. those from which the enclosed path reaches at least one node.</li>
+          <li>Additionally, the path in a <tref>filter</tref> can be followed by the equal ("=") sign and a <tref>Value</tref>. In that case, only the node for which that particular value is reached through the enclosed path are kept.</li>
+        </ul>
+        <p>
+The path below (taken from our running example) will look for all the events attended by the starting node, and keep only those  having <code>&lt;http://conferences.ted.com/TED2009/&gt;</code> as their URL.
+        <pre class='example'>
+/schema:attendee/[schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]
+        </pre>
         </p>
       </section>
 
