@@ -183,10 +183,10 @@ Linked Data Patch Format (LD Patch) defines a language for expressing a sequence
 Linked Data "describes a method of publishing structured data so that it can be interlinked and become more useful. It builds upon standard Web technologies such as HTTP, RDF and URIs, but rather than using them to serve web pages for human readers, it extends them to share information in a way that can be read automatically by computers. This enables data from different sources to be connected and queried." (source Wikipedia).
       </p>
       <p>
-This document defines the Linked Data Patch Format (LD Patch), a patch format for Linked Data. It is suitable for use with HTTP PATCH [@@RFC5789], a method to perform partial modifications to Web resources. The "text/ldpatch" media type is used to identify such LD Patch documents.
+This document defines the Linked Data Patch Format (LD Patch), a format for describing changes to apply to Linked Data. It is suitable for use with HTTP PATCH [@@RFC5789], a method to perform partial modifications to Web resources. The "text/ldpatch" media type is used to identify such LD Patch documents.
       </p>
       <p>
-An instance of the LD Patch language (or LD Patch document) defines a list of operations to be performed against an RDF Graph. Operations include @@@. They operate on nodes and triples belonging to the graph.
+An instance of the LD Patch language (or LD Patch document) defines a list of operations to be performed against an RDF Graph, namely the addition or removal of RDF triples in this graph.
       </p>
       <p>
         The following RDF Graph will be used as an example through this specification. It describes the relation between a person named Tim Berners-Lee (denoted by <code>&lt;http://example.org/timbl#&gt;</code>) and two events he attended.
