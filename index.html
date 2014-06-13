@@ -314,7 +314,7 @@ Once a prefix such as <code>@prefix foo: &lt;http://example.org/ns#&gt;</code> i
         </p>
       </section>
       <section>
-        <h2><tdef>Path expressions</tdef></h2>
+        <h2><tdef>Path expression</tdef></h2>
         <p>
 LD Patch uses path expressions to offer possible routes through a graph between two graph nodes. A trivial case is a path expression of length 1, which is a triple pattern (@@Discuss). The ends of the path may be RDF terms or variables. Variables can not be used as part of the path itself, only as ends.
         </p>
@@ -329,7 +329,10 @@ Path expressions allow for more concise graph patterns while also adding the abi
       <section>
         <h2><tdef>Node matching semantics</tdef></h2>
         <p>
-
+LD Patch borrows much of its syntax to Turtle (@@@ref) and SPARQL (@@@ref) for describing nodes. IRIs (either abbreviated or not) and literals represent the corresponding node in the graph being patched. Bland nodes, on the other hand, pose a problem, as they have no global identifier. Indeed, blank node identifiers have their scope limited to the document in which they appear. As a consequence, whenever a blank node identifiers appears in an LD Patch document, it is understood to denote a <em>fresh</em> blank node, that needs to be created in the patched RDF graph. (@@@ remark that this is different from RDF-Patch?)
+        </p>
+        <p>
+In order to be able to address blank nodes already present in the graph, LD Patch has two mechanism: <tref>Bind</tref>ing a variable to a blank node reachable with a <tref>path expression</tref>, and <tref>UpdateList</tref> to deal with those blank nodes that constitute RDF collections.
         </p>
       </section>
 
