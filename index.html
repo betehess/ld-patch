@@ -408,7 +408,7 @@ UpdateList &lt;#&gt; ex:preferredLanguages 1>2 ( "fr-CH" ) .
       <pre>
 <tdef>LDPatch</tdef> ::= Prologue Statement*
 <tdef>Prologue</tdef> ::= <tref>Prefix</tref>*
-<tdef>Prefix</tdef> ::= "Prefix" PNAME_NS IRIREF
+<tdef>Prefix</tdef> ::= "@prefix" PNAME_NS IRIREF
 <tdef>Statement</tdef> ::= <tref>Bind</tref> | <tref>Add</tref> | <tref>Delete</tref> | <tref>UpdateList</tref>
 <tref>Bind</tref> ::= "Bind" <tref>Var</tref> <tref>Value</tref> <tref>Path</tref>?
 <tref>Add</tref> ::= "Add" <tref>Subject</tref> <tref>Predicate</tref> ( <tref>Object</tref> | <tref>List</tref> )
