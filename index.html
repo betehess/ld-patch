@@ -435,10 +435,10 @@ In LD Patch, a slice is described by two positive integers separated by ">". The
 <tdef>LDPatch</tdef> ::= Prologue Statement*
 <tdef>Prologue</tdef> ::= <tref>prefixID</tref>*
 <tdef>Statement</tdef> ::= <tref>Bind</tref> | <tref>Add</tref> | <tref>Delete</tref> | <tref>UpdateList</tref>
-<tref>Bind</tref> ::= "Bind" <tref>Var</tref> <tref>Value</tref> <tref>Path</tref>? "."
-<tref>Add</tref> ::= "Add" <tref>Subject</tref> <tref>Predicate</tref> ( <tref>Object</tref> | <tref>List</tref> ) "."
-<tref>Delete</tref> ::= "Delete" <tref>Subject</tref> <tref>Predicate</tref> <tref>Object</tref> "."
-<tref>UpdateList</tref> ::= "UpdateList" <tref>Subject</tref> <tref>Predicate</tref> <tref>Slice</tref> <tref>List</tref> "."
+<tref>Bind</tref> ::= ("Bind" | "B") <tref>Var</tref> <tref>Value</tref> <tref>Path</tref>? "."
+<tref>Add</tref> ::= ("Add" | "A") <tref>Subject</tref> <tref>Predicate</tref> ( <tref>Object</tref> | <tref>List</tref> ) "."
+<tref>Delete</tref> ::= ("Delete" | "D") <tref>Subject</tref> <tref>Predicate</tref> <tref>Object</tref> "."
+<tref>UpdateList</tref> ::= ("UpdateList" | "UL") <tref>Subject</tref> <tref>Predicate</tref> <tref>Slice</tref> <tref>List</tref> "."
 
 <tdef>Subject</tdef> ::= <tref>iri</tref> | <tref>BlankNode</tref> | <tref>Var</tref>
 <tdef>Predicate</tdef> ::= <tref>iri</tref>
