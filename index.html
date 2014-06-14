@@ -548,6 +548,9 @@ The LD Patch data model makes use of the commonly defined <a href="http://en.wik
 The denotational RDF semantics makes use of the <a href="http://en.wikipedia.org/wiki/Set-builder_notation">set-builder notation</a> for building the RDF sets.
       </p>
       <p>@@TODO@@</p>
+      <p>
+LD Patch abides to the semantics of the <a href="http://tools.ietf.org/html/rfc5789" target="_blank">HTTP PATCH method</a>, in that the server MUST apply the entire set of changes atomically and never provide (e.g., in response to a GET during this operation) a partially modified representation. If the entire patch document cannot be successfully applied (e.g., one of the instructions has failed), then the server MUST NOT apply any of the changes.
+      </p>
 <!--pre>An Env(ironment) is a Map from Var-s to Node-s
 Env      ::= Map(Var, Set(Node))
 
