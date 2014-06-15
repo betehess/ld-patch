@@ -380,7 +380,7 @@ The Bind operation is defined by three components: <tref>Var</tref>, <tref>Value
       <section>
         <h2><tdef>Add</tdef></h2>
         <p>
-The Add operation is used to add or append new RDF Statements to the existing graph. To add new RDF Statements, the operation requires a <tref>Subject</tref>, a <tref>Predicate</tref> and either an <tref>Object</tref> or a <tref>List</tref>.
+The Add operation is used to add or append new RDF triples to the existing graph. To add new RDF triple, the operation requires a <tref>Subject</tref>, a <tref>Predicate</tref> and either an <tref>Object</tref> or a <tref>List</tref>.
         <pre class='example'>
 ...
 Add    &lt;#&gt; profile:first_name "Timothy" .
@@ -395,7 +395,7 @@ When the third component is an <tref>Object</tref>, then a single statement will
       <section>
         <h2><tdef>Delete</tdef></h2>
         <p>
-The Delete operation is used to remove a single RDF Statement from the existing graph. The syntax for the Delete operation requires a <tref>Subject</tref>, a <tref>Predicate</tref> and an <tref>Object</tref>.
+The Delete operation is used to remove a single RDF triple from the existing graph. The syntax for the Delete operation requires a <tref>Subject</tref>, a <tref>Predicate</tref> and an <tref>Object</tref>.
         <pre class='example'>
 ...
 Delete &lt;#&gt; profile:first_name "Tim" .
