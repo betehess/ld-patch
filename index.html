@@ -223,6 +223,8 @@ Content-Length: 478
 Content-Type: text/ldpatch
 If-Match: "abc123"
 
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix schema: &lt;http://schema.org&gt; .
 @prefix profile: &lt;http://ogp.me/ns/profile#&gt; .
 @prefix ex: &lt;http://example.org/vocab#&gt; .
 
@@ -231,14 +233,14 @@ Add    &lt;#&gt; profile:first_name "Timothy" .
 
 UpdateList &lt;#&gt; ex:preferredLanguages 1>2 ( "fr-CH" ) .
 
-Bind ?event &lt;#&gt; /schema:attendee/[schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]  .
+Bind ?event &lt;#&gt; /schema:attendee[/schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]  .
 Add ?event rdf:type schema:Event .
 
 Bind ?ted &lt;http://conferences.ted.com/TED2009/&gt; /-schema:url! .
 Delete ?ted schema:startDate "2009-02-04".
 Add ?ted schema:location _:loc .
-Add _loc schema:name "Long Beach, California" .
-Add _loc schema:geo _:geo .
+Add _:loc schema:name "Long Beach, California" .
+Add _:loc schema:geo _:geo .
 Add _:geo schema:latitude "33.7817" .
 Add _:geo schema:longitude "-118.2054" .
       </pre>
