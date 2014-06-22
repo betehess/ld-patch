@@ -350,7 +350,7 @@ A Path may also contains <tref>Constraint</tref>s, which are of two kinds:
         <p>
 The path below (taken from our running example) will look for all the events attended by the starting node, and keep only those  having <code>&lt;http://conferences.ted.com/TED2009/&gt;</code> as their URL.
         <pre class='example'>
-/schema:attendee/[/schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]
+/schema:attendee[/schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]
         </pre>
         </p>
       </section>
@@ -361,7 +361,7 @@ The path below (taken from our running example) will look for all the events att
 The Bind operation is used to create a new variable by binding or assigning an RDF Term to the variable. The bound variable has a global scope. Use of a given variable name anywhere in an LD Patch document identifies the same variable (@@@ but a variable _can_ be redefined). Following the example above, the Bind operation creates a new variable called <code>event</code>, starting from the RDF Term <code>&lt;#&gt;</code> and following the path expression <code>/schema:attendee/[/schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]</code> in order to identify the RDF Term to which this variable will point -- i.e. <code>_:b2</code>.
         <pre class='example'>
 ...
-Bind ?event &lt;#&gt; /schema:attendee/[/schema:url = &lt;http://conferences.ted.com/TED2009/&gt;] .
+Bind ?event &lt;#&gt; /schema:attendee[/schema:url = &lt;http://conferences.ted.com/TED2009/&gt;] .
 ...
         </pre>
         </p>
