@@ -3,7 +3,7 @@
   <head>
     <title>Linked Data Patch Format</title>
     <meta charset='utf-8'>
-    <script src='http://www.w3.org/Tools/respec/respec-w3c-common'
+    <script src='https://www.w3.org/Tools/respec/respec-w3c-common'
             async class='remove'></script>
     <script class='remove'>
       var preProc = {
@@ -112,7 +112,7 @@
           // previousMaturity:  "WD",
 
           // if there a publicly available Editor's Draft, this is the link
-          edDraftURI:           "http://ld-specs.github.io/ld-patch/",
+          edDraftURI:           "https://dvcs.w3.org/hg/ldpwg/raw-file/ldpatch/ldpatch.html",
 
           // if this is a LCWD, uncomment and set the end of its review period
           // lcEnd: "2009-08-05",
@@ -188,6 +188,12 @@ This document defines the Linked Data Patch Format (LD Patch), a format for desc
       <p>
 An instance of the LD Patch language (or LD Patch document) defines a list of operations to be performed against an RDF Graph, namely the addition or removal of RDF triples in this graph.
       </p>
+
+
+
+
+      <h2 id="intro-example">Example</h2>
+
       <p>
         The following RDF Graph will be used as an example through this specification. It describes the relation between a person named Tim Berners-Lee (denoted by <code>&lt;http://example.org/timbl#&gt;</code>) and two events he attended.
       </p>
@@ -195,8 +201,8 @@ An instance of the LD Patch language (or LD Patch document) defines a list of op
 @prefix schema: &lt;http://schema.org/&gt; .
 @prefix profile: &lt;http://ogp.me/ns/profile#&gt; .
 @prefix ex: &lt;http://example.org/vocab#&gt; .
-
-&lt;http://example.org/timbl#&gt; a schema:Person ;
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+&lt;http://example.com/timbl#&gt; a schema:Person ;
   schema:alternateName "TimBL" ;
   profile:first_name "Tim" ;
   profile:last_name "Berners-Lee" ;
@@ -204,13 +210,12 @@ An instance of the LD Patch language (or LD Patch document) defines a list of op
   schema:attendee _:b1, _:b2 ;
   ex:preferredLanguages ( "en" "fr" ).
 
-_:b1  ;
-  schema:name "F2F5 - Linked Data Platform" ;
+_:b1 schema:name "F2F5 - Linked Data Platform" ;
   schema:url &lt;https://www.w3.org/2012/ldp/wiki/F2F5&gt; .
 
 _:b2 a schema:Event ;
   schema:name "TED 2009" ;
-  schema:startDate "2009-02-04" .
+  schema:startDate "2009-02-04" ;
   schema:url &lt;http://conferences.ted.com/TED2009/&gt; .
       </pre>
       <p>
@@ -224,16 +229,16 @@ Content-Type: text/ldpatch
 If-Match: "abc123"
 
 @prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
-@prefix schema: &lt;http://schema.org&gt; .
+@prefix schema: &lt;http://schema.org/&gt; .
 @prefix profile: &lt;http://ogp.me/ns/profile#&gt; .
 @prefix ex: &lt;http://example.org/vocab#&gt; .
 
 Delete &lt;#&gt; profile:first_name "Tim" .
 Add    &lt;#&gt; profile:first_name "Timothy" .
 
-UpdateList &lt;#&gt; ex:preferredLanguages 1>2 ( "fr-CH" ) .
+UpdateList &lt;#&gt; ex:preferredLanguages 1&gt;2 ( "fr-CH" ) .
 
-Bind ?event &lt;#&gt; /schema:attendee[/schema:url = &lt;http://conferences.ted.com/TED2009/&gt;]  .
+Bind ?event &lt;#&gt; /schema:attendee[/schema:url = &lt;https://www.w3.org/2012/ldp/wiki/F2F5&gt;]  .
 Add ?event rdf:type schema:Event .
 
 Bind ?ted &lt;http://conferences.ted.com/TED2009/&gt; /-schema:url! .
@@ -255,7 +260,7 @@ The following is the resulting (patched) document.
 @prefix profile: &lt;http://ogp.me/ns/profile#&gt; .
 @prefix ex: &lt;http://example.org/vocab#&gt; .
 
-&lt;http://example.org/timbl#&gt; a schema:Person ;
+&lt;http://example.com/timbl#&gt; a schema:Person ;
   schema:alternateName "TimBL" ;
   profile:first_name "Timothy" ;
   profile:last_name "Berners-Lee" ;
@@ -263,7 +268,7 @@ The following is the resulting (patched) document.
   schema:attendee _:b1, _:b2 ;
   ex:preferredLanguages ( "en" "fr-CH" ).
 
-_:b1  ;
+_:b1 a schema:Event ;
   schema:name "F2F5 - Linked Data Platform" ;
   schema:url &lt;https://www.w3.org/2012/ldp/wiki/F2F5&gt; .
 
@@ -272,7 +277,7 @@ _:b2 a schema:Event ;
   schema:url &lt;http://conferences.ted.com/TED2009/&gt; ;
   schema:location [
     schema:name "Long Beach, California";
-    schema:geo [ schema:latitude "33.7817" ; schema:longitude "-118.2054" ] .
+    schema:geo [ schema:latitude "33.7817" ; schema:longitude "-118.2054" ]
   ] .
       </pre>
 
